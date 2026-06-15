@@ -1,0 +1,3163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Human Use of Human Beings — Learning Course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0e1b2e;        /* blueprint navy */
+  --ink-2:#16263d;
+  --paper:#f4efe2;      /* warm instrument paper */
+  --paper-2:#ece4d1;
+  --signal:#e8a13a;     /* signal amber — the message in the noise */
+  --signal-deep:#c9821f;
+  --phosphor:#3ec98a;   /* live feedback green */
+  --rust:#b6512f;       /* warning / entropy */
+  --line:#2b3d57;
+  --line-soft:rgba(244,239,226,.16);
+  --txt:#10141c;
+  --txt-soft:#5c6678;
+  --paper-line:#d8cdb4;
+  --display:'Space Grotesk',system-ui,sans-serif;
+  --body:'Newsreader',Georgia,serif;
+  --mono:'JetBrains Mono',monospace;
+  --shadow:0 18px 50px -20px rgba(8,16,28,.55);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);
+  background:var(--ink);
+  color:var(--txt);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+::selection{background:var(--signal);color:var(--ink)}
+
+/* ---------- App shell ---------- */
+#app{display:flex;min-height:100vh}
+
+/* ---------- Sidebar ---------- */
+#sidebar{
+  width:330px;flex-shrink:0;background:var(--ink);
+  border-right:1px solid var(--line);
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  display:flex;flex-direction:column;
+  z-index:40;
+}
+#sidebar::-webkit-scrollbar{width:8px}
+#sidebar::-webkit-scrollbar-thumb{background:var(--line);border-radius:4px}
+.brand{padding:26px 24px 20px;border-bottom:1px solid var(--line)}
+.brand .eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--signal);margin-bottom:12px}
+.brand h1{font-family:var(--display);color:var(--paper);font-size:20px;line-height:1.15;font-weight:600;letter-spacing:-.01em}
+.brand .sub{font-family:var(--mono);font-size:10.5px;color:var(--txt-soft);margin-top:10px;letter-spacing:.04em}
+
+.progress-wrap{padding:16px 24px;border-bottom:1px solid var(--line)}
+.progress-label{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-soft);margin-bottom:8px}
+.progress-track{height:5px;background:var(--ink-2);border-radius:3px;overflow:hidden;border:1px solid var(--line)}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--phosphor),var(--signal));transition:width .6s cubic-bezier(.2,.8,.2,1)}
+
+nav{flex:1;padding:10px 0 30px}
+.nav-section{font-family:var(--mono);font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--txt-soft);padding:16px 24px 6px}
+.nav-item{
+  display:flex;align-items:flex-start;gap:12px;width:100%;text-align:left;
+  padding:11px 24px;color:rgba(244,239,226,.62);transition:.18s;position:relative;
+  border-left:3px solid transparent;font-family:var(--display);font-size:13.5px;
+}
+.nav-item:hover{background:var(--ink-2);color:var(--paper)}
+.nav-item.active{background:linear-gradient(90deg,rgba(232,161,58,.12),transparent);color:var(--paper);border-left-color:var(--signal)}
+.nav-num{font-family:var(--mono);font-size:11px;color:var(--signal);flex-shrink:0;width:22px;padding-top:1px}
+.nav-item.active .nav-num{color:var(--signal)}
+.nav-title{flex:1;line-height:1.3}
+.nav-check{flex-shrink:0;width:15px;height:15px;border:1.5px solid var(--line);border-radius:50%;margin-top:1px;display:grid;place-items:center;transition:.2s}
+.nav-check.done{background:var(--phosphor);border-color:var(--phosphor)}
+.nav-check.done::after{content:"";width:7px;height:4px;border-left:2px solid var(--ink);border-bottom:2px solid var(--ink);transform:rotate(-45deg) translateY(-1px)}
+
+.side-foot{padding:18px 24px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10px;color:var(--txt-soft);line-height:1.7}
+.side-foot button{color:var(--signal);text-decoration:underline;text-underline-offset:2px;font-family:var(--mono);font-size:10px;display:block;margin-top:8px}
+
+/* ---------- Main column ---------- */
+#main{flex:1;background:var(--paper);min-height:100vh;position:relative}
+.topbar{position:sticky;top:0;z-index:30;background:rgba(244,239,226,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--paper-line);padding:0 clamp(20px,5vw,56px);height:56px;display:flex;align-items:center;justify-content:space-between}
+.topbar .crumb{font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--txt-soft);text-transform:uppercase}
+.topbar .crumb b{color:var(--ink)}
+.menu-btn{display:none}
+.content{max-width:840px;margin:0 auto;padding:clamp(28px,5vw,60px) clamp(20px,5vw,56px) 120px}
+
+/* ---------- Hero (home) ---------- */
+.hero{position:relative;background:var(--ink);color:var(--paper);overflow:hidden;border-bottom:3px solid var(--signal)}
+.hero-inner{max-width:900px;margin:0 auto;padding:clamp(54px,8vw,110px) clamp(20px,5vw,56px) clamp(60px,8vw,90px);position:relative;z-index:2}
+.hero .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--signal);margin-bottom:24px}
+.hero h1{font-family:var(--display);font-size:clamp(36px,7vw,72px);line-height:.98;font-weight:700;letter-spacing:-.025em;margin-bottom:8px}
+.hero h1 .light{display:block;font-weight:400;color:rgba(244,239,226,.55);font-size:clamp(20px,3.4vw,34px);letter-spacing:.02em;margin-top:14px}
+.hero p.lede{font-size:clamp(16px,2vw,20px);max-width:620px;margin-top:30px;color:rgba(244,239,226,.82);line-height:1.55}
+.hero .byline{font-family:var(--mono);font-size:11.5px;color:var(--txt-soft);margin-top:26px;letter-spacing:.04em;line-height:1.8}
+.hero-cta{margin-top:40px;display:flex;gap:14px;flex-wrap:wrap}
+.btn{font-family:var(--display);font-weight:600;font-size:14px;padding:13px 26px;border-radius:2px;transition:.2s;letter-spacing:.01em;display:inline-flex;align-items:center;gap:9px}
+.btn-primary{background:var(--signal);color:var(--ink)}
+.btn-primary:hover{background:var(--paper);transform:translateY(-2px)}
+.btn-ghost{border:1px solid var(--line-soft);color:var(--paper)}
+.btn-ghost:hover{border-color:var(--signal);color:var(--signal)}
+
+/* feedback-loop signature graphic */
+.loop-bg{position:absolute;inset:0;z-index:1;opacity:.5;pointer-events:none}
+
+/* ---------- Home body ---------- */
+.home-body{max-width:900px;margin:0 auto;padding:clamp(40px,6vw,72px) clamp(20px,5vw,56px) 80px}
+.section-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--signal-deep);margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.section-eyebrow::before{content:"";width:30px;height:1px;background:var(--signal-deep)}
+.home-body h2{font-family:var(--display);font-size:clamp(24px,3.6vw,34px);font-weight:600;letter-spacing:-.015em;color:var(--ink);margin-bottom:18px;line-height:1.1}
+.home-body p{font-size:17px;color:#2a3240;margin-bottom:18px;max-width:680px}
+.three-hooks{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin:34px 0}
+.hook{background:var(--paper-2);border:1px solid var(--paper-line);border-top:3px solid var(--signal);padding:22px;border-radius:3px}
+.hook .h-num{font-family:var(--mono);font-size:11px;color:var(--signal-deep);letter-spacing:.1em}
+.hook h3{font-family:var(--display);font-size:17px;margin:8px 0 8px;color:var(--ink);font-weight:600}
+.hook p{font-size:14px;color:var(--txt-soft);margin:0}
+
+.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-top:30px}
+.mod-card{background:var(--paper);border:1px solid var(--paper-line);border-radius:3px;padding:18px 20px;text-align:left;transition:.2s;position:relative;overflow:hidden}
+.mod-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--signal);transform:scaleY(0);transform-origin:top;transition:.25s}
+.mod-card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--signal)}
+.mod-card:hover::before{transform:scaleY(1)}
+.mod-card .mc-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.mod-card .mc-num{font-family:var(--mono);font-size:12px;color:var(--signal-deep);letter-spacing:.08em}
+.mod-card .mc-min{font-family:var(--mono);font-size:10px;color:var(--txt-soft)}
+.mod-card h3{font-family:var(--display);font-size:15.5px;font-weight:600;color:var(--ink);line-height:1.25;margin-bottom:6px}
+.mod-card .mc-ch{font-family:var(--mono);font-size:10.5px;color:var(--txt-soft)}
+.mod-card .mc-done{position:absolute;top:14px;right:16px;color:var(--phosphor);font-family:var(--mono);font-size:10px;display:none}
+.mod-card.done .mc-done{display:block}
+
+/* ---------- Module view ---------- */
+.mod-head{margin-bottom:8px}
+.mod-head .mh-eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--signal-deep);display:flex;gap:14px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+.mh-eyebrow .chip{background:var(--ink);color:var(--paper);padding:3px 9px;border-radius:2px;letter-spacing:.08em}
+.mod-head h1{font-family:var(--display);font-size:clamp(28px,4.6vw,44px);font-weight:700;letter-spacing:-.02em;color:var(--ink);line-height:1.04;margin-bottom:10px}
+.mod-meta{font-family:var(--mono);font-size:12px;color:var(--txt-soft);margin-bottom:30px;border-bottom:1px solid var(--paper-line);padding-bottom:24px}
+
+.block{margin:38px 0}
+.block-label{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--signal-deep);margin-bottom:16px;display:flex;align-items:center;gap:12px}
+.block-label .ico{width:22px;height:22px;flex-shrink:0}
+.block-label::after{content:"";flex:1;height:1px;background:var(--paper-line)}
+
+.prose p{font-size:17.5px;line-height:1.72;color:#222a36;margin-bottom:18px}
+.prose p:first-letter{}
+
+/* key ideas */
+.ki-list{display:flex;flex-direction:column;gap:0;border:1px solid var(--paper-line);border-radius:4px;overflow:hidden}
+.ki{padding:18px 22px;border-bottom:1px solid var(--paper-line);background:var(--paper);transition:.15s}
+.ki:last-child{border-bottom:none}
+.ki:hover{background:var(--paper-2)}
+.ki .ki-term{font-family:var(--display);font-weight:600;font-size:16px;color:var(--ink);margin-bottom:5px;display:flex;align-items:baseline;gap:10px}
+.ki .ki-term .dot{width:7px;height:7px;border-radius:50%;background:var(--signal);flex-shrink:0;position:relative;top:-1px}
+.ki .ki-def{font-size:15.5px;color:#3a4250;line-height:1.6}
+
+/* examples */
+.ex{background:var(--ink);color:var(--paper);border-radius:5px;padding:24px 26px;margin-bottom:16px;position:relative;overflow:hidden}
+.ex.gis{background:linear-gradient(135deg,#14233a,#1d3450);border:1px solid rgba(62,201,138,.3)}
+.ex .ex-tag{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--signal);margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.ex.gis .ex-tag{color:var(--phosphor)}
+.ex h4{font-family:var(--display);font-size:18px;font-weight:600;margin-bottom:10px;color:var(--paper)}
+.ex p{font-size:15px;line-height:1.62;color:rgba(244,239,226,.84);margin:0}
+
+/* exercise */
+.exercise{background:var(--paper-2);border:1px dashed var(--signal-deep);border-radius:5px;padding:26px}
+.exercise h4{font-family:var(--display);font-size:19px;color:var(--ink);margin-bottom:6px;font-weight:600}
+.exercise .ex-sub{font-family:var(--mono);font-size:11px;color:var(--signal-deep);letter-spacing:.1em;text-transform:uppercase;margin-bottom:18px}
+.exercise ol{list-style:none;counter-reset:step}
+.exercise li{counter-increment:step;position:relative;padding:0 0 16px 44px;font-size:15.5px;color:#2a3240;line-height:1.55}
+.exercise li:last-child{padding-bottom:0}
+.exercise li::before{content:counter(step);position:absolute;left:0;top:-2px;width:28px;height:28px;background:var(--ink);color:var(--signal);font-family:var(--mono);font-size:13px;font-weight:500;display:grid;place-items:center;border-radius:50%}
+.exercise li:not(:last-child)::after{content:"";position:absolute;left:13px;top:30px;bottom:6px;width:1.5px;background:var(--paper-line)}
+
+/* teach-back callout */
+.teach{display:flex;gap:16px;align-items:flex-start;background:rgba(62,201,138,.08);border-left:3px solid var(--phosphor);padding:20px 22px;border-radius:0 4px 4px 0;margin-top:16px}
+.teach .t-ico{flex-shrink:0;width:30px;height:30px;color:var(--phosphor)}
+.teach .t-body .t-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#1e8a5a;margin-bottom:6px}
+.teach .t-body p{font-size:15px;color:#243b30;line-height:1.55;margin:0;font-style:italic}
+
+/* ---------- Quiz ---------- */
+.quiz-intro{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:8px}
+.quiz-score{font-family:var(--mono);font-size:12px;color:var(--txt-soft)}
+.quiz-score b{color:var(--signal-deep)}
+.q{border:1px solid var(--paper-line);border-radius:5px;margin-bottom:16px;overflow:hidden;background:var(--paper)}
+.q-head{padding:20px 22px 8px;display:flex;gap:12px}
+.q-n{font-family:var(--mono);font-size:13px;color:var(--signal-deep);flex-shrink:0}
+.q-text{font-family:var(--display);font-size:16.5px;font-weight:500;color:var(--ink);line-height:1.4}
+.opts{padding:8px 22px 18px;display:flex;flex-direction:column;gap:8px}
+.opt{text-align:left;border:1.5px solid var(--paper-line);border-radius:4px;padding:13px 16px;font-size:15px;color:#2a3240;transition:.15s;display:flex;gap:12px;align-items:flex-start;line-height:1.45}
+.opt .opt-key{font-family:var(--mono);font-size:12px;color:var(--txt-soft);flex-shrink:0;width:18px;font-weight:500;padding-top:1px}
+.opt:hover:not(.locked){border-color:var(--signal);background:var(--paper-2)}
+.opt.correct{border-color:var(--phosphor);background:rgba(62,201,138,.12)}
+.opt.correct .opt-key{color:#1e8a5a}
+.opt.wrong{border-color:var(--rust);background:rgba(182,81,47,.1)}
+.opt.wrong .opt-key{color:var(--rust)}
+.opt.locked{cursor:default;opacity:.85}
+.opt.locked:not(.correct):not(.wrong){opacity:.5}
+.explain{background:var(--ink);color:var(--paper);padding:0 22px;max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease}
+.explain.show{max-height:320px;padding:18px 22px}
+.explain .e-label{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--signal);margin-bottom:7px}
+.explain p{font-size:14.5px;line-height:1.6;color:rgba(244,239,226,.88);margin:0}
+
+.quiz-result{display:none;text-align:center;padding:34px;border:2px solid var(--signal);border-radius:6px;background:var(--paper-2);margin-top:8px}
+.quiz-result.show{display:block;animation:rise .5s ease}
+.quiz-result .big{font-family:var(--display);font-size:48px;font-weight:700;color:var(--ink)}
+.quiz-result .lbl{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--txt-soft);text-transform:uppercase;margin-top:4px}
+.quiz-result .msg{font-size:16px;color:#2a3240;margin-top:14px}
+
+/* ---------- Module footer nav ---------- */
+.mod-footer{display:flex;justify-content:space-between;gap:14px;margin-top:60px;padding-top:30px;border-top:1px solid var(--paper-line)}
+.fnav{flex:1;max-width:48%;border:1px solid var(--paper-line);border-radius:4px;padding:16px 20px;transition:.2s;text-align:left}
+.fnav:hover{border-color:var(--signal);background:var(--paper-2)}
+.fnav.next{text-align:right}
+.fnav .fn-dir{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--txt-soft)}
+.fnav .fn-title{font-family:var(--display);font-size:15px;font-weight:600;color:var(--ink);margin-top:5px;line-height:1.25}
+.fnav.disabled{opacity:.35;pointer-events:none}
+.mark-done{display:block;width:100%;margin-top:26px;background:var(--ink);color:var(--paper);font-family:var(--display);font-weight:600;font-size:15px;padding:16px;border-radius:3px;transition:.2s;letter-spacing:.01em}
+.mark-done:hover{background:var(--signal);color:var(--ink)}
+.mark-done.done{background:var(--phosphor);color:var(--ink)}
+
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.fade{animation:fade .4s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ---------- Responsive ---------- */
+.scrim{display:none}
+@media(max-width:880px){
+  #sidebar{position:fixed;left:0;top:0;transform:translateX(-100%);transition:transform .3s ease;box-shadow:var(--shadow)}
+  #sidebar.open{transform:none}
+  .scrim{display:none;position:fixed;inset:0;background:rgba(8,14,24,.5);z-index:35}
+  .scrim.show{display:block}
+  .menu-btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink)}
+  .menu-btn svg{width:18px;height:18px}
+  .mod-footer{flex-direction:column}
+  .fnav{max-width:100%}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* === ENHANCEMENT STYLES === */
+/* ===== THEME DEFINITIONS ===== */
+
+/* Blueprint theme — light engineering-drawing feel */
+:root[data-theme="blueprint"]{
+  --ink:#1a3a5c; --ink-2:#234b72;
+  --paper:#eef4fa; --paper-2:#dce8f4;
+  --signal:#d4852e; --signal-deep:#b86e1f;
+  --phosphor:#2e9e6a; --rust:#c0543a;
+  --line:#3b6a9e; --line-soft:rgba(30,58,92,.18);
+  --paper-line:#bdd0e6;
+  --txt:#142838; --txt-soft:#5678a0;
+}
+[data-theme="blueprint"] #main{background:var(--paper)}
+[data-theme="blueprint"] .topbar{background:rgba(238,244,250,.92);border-bottom-color:var(--paper-line)}
+[data-theme="blueprint"] .mod-card{background:var(--paper);border-color:var(--paper-line)}
+[data-theme="blueprint"] .ki,[data-theme="blueprint"] .q{background:var(--paper)}
+[data-theme="blueprint"] .exercise{background:var(--paper-2);border-color:var(--signal-deep)}
+
+/* Parchment theme — warm scholarly */
+:root[data-theme="parchment"]{
+  --ink:#2a1f14; --ink-2:#3d2e20;
+  --paper:#faf3e4; --paper-2:#f0e6ce;
+  --signal:#b8782a; --signal-deep:#9a6420;
+  --phosphor:#48a070; --rust:#a84830;
+  --line:#7a6a4d; --line-soft:rgba(250,243,226,.22);
+  --paper-line:#dccfa8;
+  --txt:#2a2118; --txt-soft:#6b5d48;
+}
+[data-theme="parchment"] #main{background:#faf3e4}
+[data-theme="parchment"] .topbar{background:rgba(250,243,228,.92);border-bottom-color:#dccfa8}
+[data-theme="parchment"] .mod-card{background:#faf3e4;border-color:#dccfa8}
+[data-theme="parchment"] .hook{background:#f0e6ce;border-color:#dccfa8}
+[data-theme="parchment"] .ki,[data-theme="parchment"] .q{background:#faf3e4}
+[data-theme="parchment"] .exercise{background:#f0e6ce;border-color:var(--signal-deep)}
+
+/* Terminal theme — dark green-on-black */
+:root[data-theme="terminal"]{
+  --ink:#0a0e0a; --ink-2:#121a12;
+  --paper:#0d120d; --paper-2:#162016;
+  --signal:#44d488; --signal-deep:#2eb86e;
+  --phosphor:#44d488; --rust:#e86040;
+  --line:#1a2e1a; --line-soft:rgba(68,212,136,.12);
+  --paper-line:#1e321e;
+  --txt:#b8e8c8; --txt-soft:#5a9a6e;
+}
+[data-theme="terminal"] #main{background:#0d120d}
+[data-theme="terminal"] .topbar{background:rgba(13,18,13,.94);border-bottom-color:#1a2e1a}
+[data-theme="terminal"] .hero{background:#060a06}
+[data-theme="terminal"] .mod-card{background:#121a12;border-color:#1e321e}
+[data-theme="terminal"] .mod-card:hover{background:#1a2818;border-color:var(--signal)}
+[data-theme="terminal"] .hook{background:#121a12;border-color:#1e321e;border-top-color:var(--signal)}
+[data-theme="terminal"] .ki{background:#0d120d;border-color:#1e321e}
+[data-theme="terminal"] .ki:hover{background:#121a12}
+[data-theme="terminal"] .q{background:#0d120d;border-color:#1e321e}
+[data-theme="terminal"] .opt{border-color:#1e321e;color:var(--txt)}
+[data-theme="terminal"] .opt:hover:not(.locked){border-color:var(--signal);background:#121a12}
+[data-theme="terminal"] .exercise{background:#121a12;border-color:var(--signal)}
+[data-theme="terminal"] .teach{background:rgba(68,212,136,.06);border-left-color:var(--signal)}
+[data-theme="terminal"] .prose p{color:var(--txt)}
+[data-theme="terminal"] .ki .ki-def{color:#8ac8a0}
+[data-theme="terminal"] .home-body h2{color:var(--txt)}
+[data-theme="terminal"] .home-body p{color:#8ac8a0}
+[data-theme="terminal"] .ex{background:#060a06}
+[data-theme="terminal"] .ex.gis{background:#0a1410}
+[data-theme="terminal"] .quiz-result{background:#121a12;border-color:var(--signal)}
+[data-theme="terminal"] .fnav{border-color:#1e321e}
+[data-theme="terminal"] .fnav:hover{border-color:var(--signal);background:#121a12}
+[data-theme="terminal"] .mark-done{background:var(--signal);color:#060a06}
+[data-theme="terminal"] .mark-done:hover{background:#b8e8c8}
+
+/* Midnight theme — full dark mode */
+:root[data-theme="midnight"]{
+  --ink:#08101e; --ink-2:#101a2e;
+  --paper:#141e30; --paper-2:#1a2840;
+  --signal:#f0aa40; --signal-deep:#e8982a;
+  --phosphor:#5ae0a6; --rust:#f08060;
+  --line:#243450; --line-soft:rgba(244,239,226,.10);
+  --paper-line:#243450;
+  --txt:#d8dce4; --txt-soft:#7888a4;
+}
+[data-theme="midnight"] #main{background:#141e30}
+[data-theme="midnight"] .topbar{background:rgba(20,30,48,.94);border-bottom-color:#243450}
+[data-theme="midnight"] .hero{background:#08101e}
+[data-theme="midnight"] .mod-card{background:#1a2840;border-color:#243450}
+[data-theme="midnight"] .mod-card:hover{background:#203050;border-color:var(--signal)}
+[data-theme="midnight"] .hook{background:#1a2840;border-color:#243450;border-top-color:var(--signal)}
+[data-theme="midnight"] .ki{background:#141e30;border-color:#243450}
+[data-theme="midnight"] .ki:hover{background:#1a2840}
+[data-theme="midnight"] .q{background:#141e30;border-color:#243450}
+[data-theme="midnight"] .opt{border-color:#243450;color:var(--txt)}
+[data-theme="midnight"] .opt:hover:not(.locked){border-color:var(--signal);background:#1a2840}
+[data-theme="midnight"] .exercise{background:#1a2840;border-color:var(--signal)}
+[data-theme="midnight"] .teach{background:rgba(90,224,166,.06)}
+[data-theme="midnight"] .prose p{color:var(--txt)}
+[data-theme="midnight"] .ki .ki-def{color:#a0a8b8}
+[data-theme="midnight"] .home-body h2{color:var(--txt)}
+[data-theme="midnight"] .home-body p{color:#a0a8b8}
+[data-theme="midnight"] .ex{background:#08101e}
+[data-theme="midnight"] .ex.gis{background:linear-gradient(135deg,#0a1828,#142838)}
+[data-theme="midnight"] .quiz-result{background:#1a2840;border-color:var(--signal)}
+[data-theme="midnight"] .fnav{border-color:#243450}
+[data-theme="midnight"] .fnav:hover{border-color:var(--signal);background:#1a2840}
+[data-theme="midnight"] .mark-done{background:var(--signal);color:#08101e}
+
+/* ===== TOPBAR ICONS ===== */
+.topbar-actions{display:flex;align-items:center;gap:6px}
+.tb-btn{width:36px;height:36px;border-radius:6px;display:grid;place-items:center;transition:.18s;color:var(--txt-soft);position:relative}
+.tb-btn:hover{background:var(--paper-2);color:var(--ink)}
+.tb-btn svg{width:18px;height:18px}
+.tb-btn .tb-badge{position:absolute;top:4px;right:4px;width:7px;height:7px;border-radius:50%;background:var(--phosphor)}
+
+/* ===== SETTINGS PANEL ===== */
+.settings-overlay{display:none;position:fixed;inset:0;z-index:90;background:rgba(8,14,24,.5)}
+.settings-overlay.open{display:block}
+.settings-panel{position:fixed;top:0;right:0;bottom:0;width:380px;max-width:92vw;background:var(--paper);box-shadow:-12px 0 40px rgba(0,0,0,.25);z-index:91;overflow-y:auto;transform:translateX(100%);transition:transform .3s ease}
+.settings-overlay.open .settings-panel{transform:none}
+.sp-head{padding:24px 28px 18px;border-bottom:1px solid var(--paper-line);display:flex;justify-content:space-between;align-items:center}
+.sp-head h2{font-family:var(--display);font-size:20px;font-weight:700;color:var(--ink)}
+.sp-close{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;transition:.15s;color:var(--txt-soft)}
+.sp-close:hover{background:var(--paper-2);color:var(--ink)}
+.sp-section{padding:20px 28px;border-bottom:1px solid var(--paper-line)}
+.sp-label{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--signal-deep);margin-bottom:14px}
+.sp-desc{font-size:13px;color:var(--txt-soft);margin-bottom:14px;line-height:1.5}
+
+/* theme swatches */
+.theme-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:8px}
+.theme-swatch{border:2px solid var(--paper-line);border-radius:6px;padding:8px 10px;text-align:center;cursor:pointer;transition:.18s;font-family:var(--mono);font-size:10px;letter-spacing:.04em}
+.theme-swatch:hover{border-color:var(--signal)}
+.theme-swatch.active{border-color:var(--signal);box-shadow:0 0 0 2px rgba(232,161,58,.25)}
+.theme-swatch .sw-preview{height:28px;border-radius:3px;margin-bottom:6px;display:flex;overflow:hidden}
+.theme-swatch .sw-side{width:35%}
+.theme-swatch .sw-main{flex:1}
+.sw-control .sw-side{background:#0e1b2e}.sw-control .sw-main{background:#f4efe2}
+.sw-blueprint .sw-side{background:#1a3a5c}.sw-blueprint .sw-main{background:#eef4fa}
+.sw-parchment .sw-side{background:#2a1f14}.sw-parchment .sw-main{background:#faf3e4}
+.sw-terminal .sw-side{background:#0a0e0a}.sw-terminal .sw-main{background:#0d120d}
+.sw-midnight .sw-side{background:#08101e}.sw-midnight .sw-main{background:#141e30}
+
+/* voice / tts settings */
+.sp-select{width:100%;padding:10px 14px;border:1.5px solid var(--paper-line);border-radius:5px;font-family:var(--display);font-size:14px;color:var(--ink);background:var(--paper);cursor:pointer;appearance:auto;margin-bottom:10px}
+.sp-select:focus{border-color:var(--signal);outline:none}
+.sp-range-wrap{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.sp-range-wrap label{font-size:13px;color:var(--txt-soft);min-width:48px}
+.sp-range-wrap input[type="range"]{flex:1;accent-color:var(--signal)}
+.sp-range-wrap .rv{font-family:var(--mono);font-size:12px;color:var(--ink);min-width:30px;text-align:right}
+
+/* youtube url input */
+.sp-input-row{display:flex;gap:8px;margin-bottom:8px}
+.sp-input{flex:1;padding:10px 14px;border:1.5px solid var(--paper-line);border-radius:5px;font-family:var(--display);font-size:13px;color:var(--ink);background:var(--paper)}
+.sp-input:focus{border-color:var(--signal);outline:none}
+.sp-input::placeholder{color:var(--txt-soft)}
+.sp-divider{display:flex;align-items:center;gap:12px;margin:10px 0;color:var(--txt-soft);font-family:var(--mono);font-size:10px;letter-spacing:.15em;text-transform:uppercase}
+.sp-divider::before,.sp-divider::after{content:"";flex:1;height:1px;background:var(--paper-line)}
+.sp-file-row{display:flex;gap:8px;margin-bottom:12px;align-items:center}
+.sp-file-label{flex:1;display:flex;align-items:center;gap:10px;padding:10px 14px;border:1.5px dashed var(--paper-line);border-radius:5px;cursor:pointer;transition:.18s;font-family:var(--display);font-size:13px;color:var(--txt-soft);min-height:42px}
+.sp-file-label:hover{border-color:var(--signal);color:var(--ink)}
+.sp-file-label.has-file{border-style:solid;border-color:var(--phosphor);color:var(--ink)}
+.sp-file-label svg{flex-shrink:0;color:var(--signal)}
+.sp-file-label span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sp-music-source{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:5px;background:var(--paper-2);margin-bottom:10px;font-size:13px;color:var(--ink)}
+.sp-source-icon{font-size:16px}
+.sp-source-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+.sp-btn{padding:10px 16px;border-radius:5px;font-family:var(--display);font-weight:600;font-size:13px;background:var(--ink);color:var(--paper);transition:.15s}
+.sp-btn:hover{background:var(--signal);color:var(--ink)}
+.sp-btn.danger{background:var(--rust);color:white}
+.sp-btn.danger:hover{opacity:.85}
+
+/* ===== HELP MODAL ===== */
+.help-overlay{display:none;position:fixed;inset:0;z-index:85;background:rgba(8,14,24,.55)}
+.help-overlay.open{display:grid;place-items:center}
+.help-box{background:var(--paper);border-radius:8px;box-shadow:0 24px 80px rgba(0,0,0,.3);width:680px;max-width:92vw;max-height:85vh;overflow-y:auto;position:relative}
+.help-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--txt-soft);transition:.15s}
+.help-close:hover{background:var(--paper-2);color:var(--ink)}
+.help-head{padding:32px 36px 20px;border-bottom:1px solid var(--paper-line)}
+.help-head h2{font-family:var(--display);font-size:26px;font-weight:700;color:var(--ink)}
+.help-head p{font-size:14px;color:var(--txt-soft);margin-top:8px}
+.help-body{padding:24px 36px 36px}
+.help-body h3{font-family:var(--display);font-size:17px;font-weight:600;color:var(--ink);margin:20px 0 8px}
+.help-body h3:first-child{margin-top:0}
+.help-body p{font-size:14.5px;color:var(--txt);line-height:1.65;margin-bottom:12px}
+.help-body kbd{display:inline-block;padding:2px 7px;border:1px solid var(--paper-line);border-radius:3px;font-family:var(--mono);font-size:11px;background:var(--paper-2);color:var(--ink)}
+
+/* ===== MUSIC WIDGET ===== */
+.music-widget{position:fixed;bottom:16px;right:16px;z-index:70;display:none}
+.music-widget.active{display:block}
+.mw-bar{background:var(--ink);border-radius:8px;padding:10px 14px;box-shadow:0 8px 28px rgba(0,0,0,.35);display:flex;align-items:center;gap:10px;min-width:200px}
+.mw-btn{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:var(--paper);transition:.15s;flex-shrink:0}
+.mw-btn:hover{background:rgba(244,239,226,.15)}
+.mw-btn svg{width:16px;height:16px}
+.mw-label{font-family:var(--mono);font-size:10px;color:var(--txt-soft);letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px}
+.mw-vol{width:60px;accent-color:var(--signal);height:4px}
+.mw-close{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:var(--txt-soft);transition:.15s;flex-shrink:0}
+.mw-close:hover{color:var(--paper)}
+.music-yt{position:absolute;bottom:56px;right:0;width:1px;height:1px;overflow:hidden;opacity:0;pointer-events:none}
+
+/* ===== TTS CONTROLS ===== */
+.tts-float{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:75;display:none}
+.tts-float.active{display:flex}
+.tts-bar{background:var(--ink);border-radius:10px;padding:8px 16px;box-shadow:0 8px 28px rgba(0,0,0,.35);display:flex;align-items:center;gap:10px}
+.tts-btn{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:var(--paper);transition:.15s;flex-shrink:0}
+.tts-btn:hover{background:rgba(244,239,226,.15)}
+.tts-btn svg{width:16px;height:16px}
+.tts-btn.tts-primary{background:var(--signal);color:var(--ink)}
+.tts-btn.tts-primary:hover{background:var(--paper);color:var(--ink)}
+.tts-label{font-family:var(--mono);font-size:11px;color:var(--paper);letter-spacing:.04em;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tts-progress{width:80px;height:4px;background:rgba(244,239,226,.15);border-radius:2px;overflow:hidden}
+.tts-progress-fill{height:100%;background:var(--signal);width:0;transition:width .3s}
+
+/* Listen buttons inside sections */
+.listen-btn{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--signal-deep);cursor:pointer;padding:4px 10px;border-radius:4px;transition:.15s;margin-left:12px;vertical-align:middle}
+.listen-btn:hover{background:var(--paper-2);color:var(--signal)}
+.listen-btn svg{width:14px;height:14px}
+.listen-btn.speaking{color:var(--phosphor)}
+
+/* ===== RESPONSIVE for new elements ===== */
+@media(max-width:880px){
+  .settings-panel{width:100%;max-width:100%}
+  .help-box{width:95vw}
+  .tts-bar{padding:6px 10px;gap:6px}
+  .tts-label{max-width:140px}
+}
+
+/* ===== EXERCISE BADGES ===== */
+.ex-badges{display:flex;gap:6px;margin:6px 0 12px;flex-wrap:wrap}
+.ex-badge{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:12px;display:inline-flex;align-items:center;gap:4px}
+.ex-badge.time{background:var(--paper-2);color:var(--txt-soft);border:1px solid var(--paper-line)}
+.ex-badge.diff{color:white}
+.ex-badge.diff-beginner{background:#3a9a6a}
+.ex-badge.diff-intermediate{background:#c98520}
+.ex-badge.diff-advanced{background:#c0543a}
+
+/* ===== CHATBOT PANEL ===== */
+.chat-overlay{display:none;position:fixed;inset:0;z-index:95;background:rgba(8,14,24,.5)}
+.chat-overlay.open{display:block}
+.chat-panel{position:fixed;top:0;right:0;bottom:0;width:440px;max-width:96vw;background:var(--paper);box-shadow:-12px 0 40px rgba(0,0,0,.3);z-index:96;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease}
+.chat-overlay.open .chat-panel{transform:none}
+.chat-head{padding:16px 20px;border-bottom:1px solid var(--paper-line);display:flex;justify-content:space-between;align-items:center;flex-shrink:0}
+.chat-head h2{font-family:var(--display);font-size:17px;font-weight:700;color:var(--ink)}
+.chat-head .sp-close{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--txt-soft);cursor:pointer}
+.chat-messages{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px}
+.chat-msg{max-width:88%;padding:10px 14px;border-radius:10px;font-size:14px;line-height:1.6;word-wrap:break-word}
+.chat-msg.user{align-self:flex-end;background:var(--signal);color:var(--ink);border-bottom-right-radius:2px}
+.chat-msg.bot{align-self:flex-start;background:var(--paper-2);color:var(--txt);border-bottom-left-radius:2px}
+.chat-msg.bot .source-tag{display:inline-block;font-family:var(--mono);font-size:10px;padding:1px 6px;border-radius:3px;background:var(--signal);color:var(--ink);margin-top:6px;letter-spacing:.04em}
+.chat-input-area{padding:12px 16px;border-top:1px solid var(--paper-line);display:flex;gap:8px;flex-shrink:0}
+.chat-input{flex:1;padding:10px 14px;border:1.5px solid var(--paper-line);border-radius:8px;font-family:var(--display);font-size:14px;color:var(--ink);background:var(--paper);resize:none;min-height:42px;max-height:100px}
+.chat-input:focus{border-color:var(--signal);outline:none}
+.chat-send{width:42px;height:42px;border-radius:8px;display:grid;place-items:center;background:var(--ink);color:var(--paper);transition:.15s;flex-shrink:0}
+.chat-send:hover{background:var(--signal);color:var(--ink)}
+.chat-send svg{width:18px;height:18px}
+.chat-typing{font-size:13px;color:var(--txt-soft);font-style:italic;padding:4px 14px}
+
+/* ===== CERTIFICATE MODAL ===== */
+.cert-overlay{display:none;position:fixed;inset:0;z-index:88;background:rgba(8,14,24,.55)}
+.cert-overlay.open{display:grid;place-items:center}
+.cert-box{background:var(--paper);border-radius:8px;box-shadow:0 24px 80px rgba(0,0,0,.3);width:680px;max-width:94vw;max-height:90vh;overflow-y:auto;padding:36px;position:relative}
+.cert-close{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;color:var(--txt-soft);cursor:pointer}
+.cert-status{text-align:center;margin-bottom:24px}
+.cert-status .cert-icon{font-size:48px;margin-bottom:12px}
+.cert-status h2{font-family:var(--display);font-size:24px;color:var(--ink)}
+.cert-status p{font-size:14px;color:var(--txt-soft);margin-top:6px}
+.cert-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:20px 0}
+.cert-stat{text-align:center;padding:14px 12px;background:var(--paper-2);border-radius:6px}
+.cert-stat .cs-val{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ink)}
+.cert-stat .cs-lbl{font-size:11px;color:var(--txt-soft);margin-top:4px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase}
+.cert-name-row{display:flex;gap:10px;margin:20px 0}
+.cert-name-input{flex:1;padding:12px 16px;border:1.5px solid var(--paper-line);border-radius:6px;font-family:var(--display);font-size:16px;color:var(--ink);background:var(--paper)}
+.cert-name-input:focus{border-color:var(--signal);outline:none}
+.cert-gen-btn{padding:12px 24px;border-radius:6px;font-family:var(--display);font-weight:700;font-size:15px;background:var(--signal);color:var(--ink);transition:.15s}
+.cert-gen-btn:hover{background:var(--phosphor);color:white}
+.cert-gen-btn:disabled{opacity:.4;cursor:not-allowed}
+.cert-preview{margin-top:20px;border:1px solid var(--paper-line);border-radius:4px;overflow:hidden}
+.cert-preview canvas{width:100%;display:block}
+
+/* ===== TTS WORD HIGHLIGHTING ===== */
+.tts-highlight{background:var(--signal);color:var(--ink);border-radius:2px;padding:0 2px;transition:background .1s}
+.tts-progress-section{margin-top:4px;height:3px;background:var(--paper-line);border-radius:2px;overflow:hidden;display:none}
+.tts-progress-section.active{display:block}
+.tts-progress-section .tps-fill{height:100%;background:var(--signal);width:0%;transition:width .3s}
+
+/* ===== RESPONSIVE for new panels ===== */
+@media(max-width:880px){
+  .chat-panel{width:100%;max-width:100%}
+  .cert-box{width:95vw;padding:24px}
+  .cert-stats{grid-template-columns:1fr}
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+  <aside id="sidebar">
+    <div class="brand">
+      <div class="eyebrow">Cybernetics &amp; Society</div>
+      <h1>The Human Use of Human Beings</h1>
+      <div class="sub">A complete learning course · after Norbert Wiener, 1950</div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Course progress</span><span id="progPct">0%</span></div>
+      <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+    </div>
+    <nav id="nav"></nav>
+    <div class="side-foot">
+      Self-paced · 14 modules · ~9 hours<br>
+      Progress saves in this browser session.
+      <button id="resetBtn">Reset progress</button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <div id="main">
+    <div class="topbar">
+      <button class="menu-btn" id="menuBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg> Modules</button>
+      <div class="crumb" id="crumb">Home</div>
+      <div class="crumb" id="crumbRight"></div>
+
+    <div class="topbar-actions">
+      <button class="tb-btn" id="chatBtn" title="Ask about the course"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></button>
+      <button class="tb-btn" id="certBtn" title="Certificate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"/><path d="M8.21 13.89L7 23l5-3 5 3-1.21-9.12"/></svg></button>
+      <button class="tb-btn" id="helpBtn" title="Help"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5" fill="currentColor"/></svg></button>
+      <button class="tb-btn" id="settingsBtn" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></button>
+    </div>
+    </div>
+    <div id="view"></div>
+  </div>
+</div>
+
+
+<!-- Settings overlay + panel -->
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-panel" id="settingsPanel">
+    <div class="sp-head">
+      <h2>Settings</h2>
+      <button class="sp-close" id="settingsClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+
+    <div class="sp-section">
+      <div class="sp-label">Theme</div>
+      <div class="sp-desc">Choose how the course looks. Your choice is saved automatically.</div>
+      <div class="theme-grid" id="themeGrid">
+        <button class="theme-swatch active" data-theme-val="">
+          <div class="sw-preview sw-control"><div class="sw-side"></div><div class="sw-main"></div></div>
+          Control Room
+        </button>
+        <button class="theme-swatch" data-theme-val="blueprint">
+          <div class="sw-preview sw-blueprint"><div class="sw-side"></div><div class="sw-main"></div></div>
+          Blueprint
+        </button>
+        <button class="theme-swatch" data-theme-val="parchment">
+          <div class="sw-preview sw-parchment"><div class="sw-side"></div><div class="sw-main"></div></div>
+          Parchment
+        </button>
+        <button class="theme-swatch" data-theme-val="terminal">
+          <div class="sw-preview sw-terminal"><div class="sw-side"></div><div class="sw-main"></div></div>
+          Terminal
+        </button>
+        <button class="theme-swatch" data-theme-val="midnight">
+          <div class="sw-preview sw-midnight"><div class="sw-side"></div><div class="sw-main"></div></div>
+          Midnight
+        </button>
+      </div>
+    </div>
+
+    <div class="sp-section">
+      <div class="sp-label">Text-to-Speech</div>
+      <div class="sp-desc">Choose the voice and speed used when you tap a Listen button.</div>
+      <select class="sp-select" id="voiceSelect"><option>Loading voices…</option></select>
+      <div class="sp-range-wrap">
+        <label>Speed</label>
+        <input type="range" id="ttsRate" min="0.5" max="2.5" step="0.1" value="1.0">
+        <span class="rv" id="ttsRateVal">1.0×</span>
+      </div>
+      <div class="sp-range-wrap">
+        <label>Pitch</label>
+        <input type="range" id="ttsPitch" min="0.5" max="2.0" step="0.1" value="1.0">
+        <span class="rv" id="ttsPitchVal">1.0</span>
+      </div>
+      <div class="sp-range-wrap" style="margin-top:10px">
+        <label style="min-width:auto;flex:1">Highlight spoken word</label>
+        <input type="checkbox" id="ttsHighlight" style="accent-color:var(--signal);width:18px;height:18px">
+      </div>
+      <div class="sp-range-wrap">
+        <label style="min-width:auto;flex:1">Show reading progress bar</label>
+        <input type="checkbox" id="ttsProgress" checked style="accent-color:var(--signal);width:18px;height:18px">
+      </div>
+    </div>
+
+    <div class="sp-section">
+      <div class="sp-label">Background Music</div>
+      <div class="sp-desc">Play ambient music while you study — load a YouTube link or pick an MP3/MP4 file from your computer.</div>
+      <div class="sp-input-row">
+        <input type="text" class="sp-input" id="ytUrlInput" placeholder="https://youtube.com/watch?v=...">
+        <button class="sp-btn" id="ytLoadBtn">Load URL</button>
+      </div>
+      <div class="sp-divider"><span>or</span></div>
+      <div class="sp-file-row">
+        <label class="sp-file-label" id="localFileLabel">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <span id="localFileName">Choose MP3 or MP4 file…</span>
+          <input type="file" id="localFileInput" accept="audio/*,video/mp4,.mp3,.mp4,.m4a,.ogg,.wav,.flac,.aac,.webm" hidden>
+        </label>
+        <button class="sp-btn" id="localFileLoadBtn" style="display:none">Play</button>
+      </div>
+      <div class="sp-range-wrap">
+        <label>Volume</label>
+        <input type="range" id="ytVolume" min="0" max="100" step="5" value="30">
+        <span class="rv" id="ytVolVal">30%</span>
+      </div>
+      <div class="sp-music-source" id="musicSourceInfo" style="display:none">
+        <span class="sp-source-icon" id="musicSourceIcon">♫</span>
+        <span class="sp-source-text" id="musicSourceText">—</span>
+      </div>
+      <button class="sp-btn danger" id="ytStopBtn" style="display:none">Stop &amp; clear music</button>
+    </div>
+  </div>
+</div>
+
+<!-- Help modal -->
+<div class="help-overlay" id="helpOverlay">
+  <div class="help-box">
+    <button class="help-close" id="helpClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    <div class="help-head">
+      <h2>How to use this course</h2>
+      <p>A quick guide to all the features available to you.</p>
+    </div>
+    <div class="help-body">
+      <h3>Course structure</h3>
+      <p id="helpCourseStructure">This course is organized into modules, each covering a key section of the source material. Every module includes an overview and summary, key ideas to retain, two worked examples, a hands-on exercise, a five-question quiz with explained answers, and a teach-back prompt. Work them in order the first time; jump freely after that.</p>
+
+      <h3>Progress tracking</h3>
+      <p>Tap <strong>"Mark this module complete"</strong> at the bottom of each module when you can pass the quiz and handle the teach-back prompt. The sidebar shows a checkmark for completed modules and the progress bar at the top tracks your overall completion. Progress saves automatically in your browser.</p>
+
+      <h3>Quizzes</h3>
+      <p>Each quiz has five questions. Tap any answer to lock it in — the correct answer highlights in green and an explanation appears immediately. Your score shows once all five questions are answered. Every explanation tells you <em>why</em> the right answer is right, not just that it is.</p>
+
+      <h3>Themes</h3>
+      <p>Open <strong>Settings</strong> (the gear icon in the top bar) and pick from five visual themes: Control Room (the default), Blueprint, Parchment, Terminal, and Midnight. Your choice is saved automatically.</p>
+
+      <h3>Text-to-Speech (Listen mode)</h3>
+      <p>Each section inside a module has a small <strong>Listen</strong> button next to its label. Tap it to hear the section read aloud using your browser's speech synthesis. A floating control bar appears with play/pause, stop, and rewind buttons. You can choose which voice and speed to use in Settings.</p>
+      <p>In Settings, you can also enable <strong>"Highlight spoken word"</strong> to visually track which word is being read, and <strong>"Show reading progress bar"</strong> to see a progress indicator under each section label while it's being read aloud.</p>
+      <p><em>Note:</em> Voices available depend on your operating system and browser. Chrome on Windows/Mac has the widest selection. Mobile browsers may have limited voices. Word highlighting accuracy varies by browser.</p>
+
+      <h3>Background music</h3>
+      <p>In Settings, you can load background music two ways: paste a <strong>YouTube URL</strong> and tap Load URL, or click <strong>"Choose MP3 or MP4 file…"</strong> to pick an audio or video file from your computer. A small player widget appears at the bottom-right corner with play/pause and volume controls. Great for lo-fi study beats or ambient soundscapes while you read. Only one source plays at a time — loading a new one stops the previous.</p>
+      <p><em>Note:</em> Local files play directly in your browser and are not uploaded anywhere. YouTube URLs are saved between sessions; local files need to be re-selected each visit.</p>
+
+      <h3>Keyboard shortcuts</h3>
+      <p><kbd>Esc</kbd> — close any open panel (settings, help, chatbot, certificate, or mobile menu).</p>
+
+      <h3>Ask about the course (Chatbot)</h3>
+      <p>Tap the <strong>chat bubble</strong> icon in the top bar to open the Q&amp;A panel. Type any question about the course material and the chatbot will search through all module content to find the most relevant answer, including which module it came from.</p>
+
+      <h3>Certificate</h3>
+      <p>Tap the <strong>medal</strong> icon in the top bar to see your certificate status. Complete all module quizzes with a passing average score (default 70%) to unlock your certificate. Enter your full name and tap "Generate PDF" to download a professionally formatted completion certificate with the date.</p>
+
+      <h3>Resetting</h3>
+      <p>To clear all progress, use the "Reset progress" link at the bottom of the sidebar. Theme, voice, and music settings are saved separately and persist even after a reset.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Music widget (hidden until a YouTube URL is loaded) -->
+<div class="music-widget" id="musicWidget">
+  <div class="mw-bar">
+    <button class="mw-btn" id="mwPlayPause" title="Play / Pause">
+      <svg id="mwPlayIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="mwPauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+    </button>
+    <span class="mw-label" id="mwLabel">Music</span>
+    <input type="range" class="mw-vol" id="mwVol" min="0" max="100" step="5" value="30" title="Volume">
+    <button class="mw-close" id="mwClose" title="Stop music"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+  </div>
+  <div class="music-yt" id="musicYt"></div>
+</div>
+
+<!-- TTS floating control bar (hidden until TTS starts) -->
+<div class="tts-float" id="ttsFloat">
+  <div class="tts-bar">
+    <button class="tts-btn" id="ttsRewind" title="Restart section"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg></button>
+    <button class="tts-btn tts-primary" id="ttsPlayPause" title="Play / Pause">
+      <svg id="ttsPlayIcon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      <svg id="ttsPauseIcon" viewBox="0 0 24 24" fill="currentColor" style="display:none"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>
+    </button>
+    <button class="tts-btn" id="ttsStop" title="Stop"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h12v12H6z"/></svg></button>
+    <span class="tts-label" id="ttsLabel">Reading…</span>
+  </div>
+</div>
+
+<!-- Chatbot panel -->
+<div class="chat-overlay" id="chatOverlay">
+  <div class="chat-panel" id="chatPanel">
+    <div class="chat-head">
+      <h2>Ask about the course</h2>
+      <button class="sp-close" id="chatClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="chat-messages" id="chatMessages">
+      <div class="chat-msg bot">Ask me anything about the course material. I'll find the answer in the content and point you to the right module.</div>
+    </div>
+    <div class="chat-input-area">
+      <textarea class="chat-input" id="chatInput" placeholder="Ask a question…" rows="1"></textarea>
+      <button class="chat-send" id="chatSend"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22 11 13 2 9l20-7z"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<!-- Certificate modal -->
+<div class="cert-overlay" id="certOverlay">
+  <div class="cert-box">
+    <button class="cert-close" id="certClose"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
+    <div class="cert-status" id="certStatus">
+      <div class="cert-icon">🏆</div>
+      <h2 id="certTitle">Course Certificate</h2>
+      <p id="certSubtitle">Complete all modules with a 70%+ average quiz score to earn your certificate.</p>
+    </div>
+    <div class="cert-stats" id="certStats"></div>
+    <div id="certFormArea" style="display:none">
+      <div class="cert-name-row">
+        <input type="text" class="cert-name-input" id="certNameInput" placeholder="Enter your full name for the certificate">
+        <button class="cert-gen-btn" id="certGenBtn">Generate PDF</button>
+      </div>
+    </div>
+    <div class="cert-preview" id="certPreview" style="display:none">
+      <canvas id="certCanvas" width="1100" height="850"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+const COURSE = {
+  "id": "canada-ai-strategy",
+  "title": "Canada's National AI Strategy: AI for All",
+  "subtitle": "Understanding the vision, pillars, and actions shaping Canada's AI future",
+  "eyebrow": "PUBLIC POLICY & TECHNOLOGY",
+  "source": "Based on Canada's National Artificial Intelligence Strategy: AI for All (2026), Innovation, Science and Economic Development Canada",
+  "audience": "Canadian public servants, policy professionals, business leaders, educators, and anyone seeking to understand Canada's federal AI strategy",
+  "lede": "This course unpacks Canada's comprehensive national AI strategy, exploring how the federal government plans to protect citizens, empower workers, build sovereign infrastructure, scale homegrown champions, and forge global alliances. You'll learn the six strategic pillars and the concrete actions behind the vision of making AI work for all Canadians.",
+  "navLabel": "Modules",
+  "orgContext": {
+    "orgName": "Government of Canada",
+    "departments": [
+      "Innovation, Science and Economic Development",
+      "Digital Transformation"
+    ],
+    "projectName": "AI for All Strategy",
+    "domain": "federal policy implementation and public service delivery"
+  },
+  "hooks": [
+    {
+      "label": "Idea 01",
+      "title": "Trust drives adoption",
+      "body": "The strategy argues that Canadians will not use AI unless they trust it. Trust is the foundation, not a brake on progress. Safety, transparency, and privacy protections unlock the broad adoption that delivers economic and social benefits."
+    },
+    {
+      "label": "Idea 02",
+      "title": "Sovereignty is non-negotiable",
+      "body": "Canada currently depends on foreign providers for compute, cloud, and chip fabrication. The strategy treats sovereign infrastructure, data governance, and homegrown foundation models as strategic imperatives rather than nice-to-haves."
+    },
+    {
+      "label": "Idea 03",
+      "title": "Adoption is the bottleneck",
+      "body": "Only 12% of Canadian businesses have formally adopted AI and only 8% of SMEs. The gap is not innovation — Canada is a world leader in AI research — but translating that innovation into real-world use across every sector and region."
+    },
+    {
+      "label": "Idea 04",
+      "title": "Champions must grow here",
+      "body": "Nearly 70% of Canadian-led startups end up headquartered abroad. The strategy aims to change the investment, procurement, and infrastructure conditions so the best AI companies scale from Canada, not away from it."
+    }
+  ],
+  "hooksLabel": "Four strategic tensions the whole strategy tries to resolve",
+  "certificate": {
+    "issuer": "Course Builder Academy",
+    "credential": "Canada AI Strategy Fundamentals",
+    "passingScore": 70
+  },
+  "modules": [
+    {
+      "id": "m0",
+      "num": "00",
+      "title": "Orientation: The AI for All Vision",
+      "chapter": "Vision & State of AI in Canada",
+      "minutes": 35,
+      "overview": [
+        "Canada's national AI strategy, titled 'AI for All,' was released in 2026 under the leadership of Minister Evan Solomon. It is the product of over 11,000 public submissions and guidance from a 28-member expert task force. The strategy represents a deliberate attempt to position Canada as a global leader in responsible, sovereign, and inclusive artificial intelligence.",
+        "At its heart, the strategy frames trust as the prerequisite for adoption. If citizens, businesses, and public institutions do not trust AI, they will not use it, and Canada will not capture its economic and social benefits. The document organizes its ambitions around three overarching goals: fostering trust, providing opportunity, and safeguarding sovereignty.",
+        "Canada starts from a paradoxical position. It is an AI innovator — the foundational research behind modern deep learning traces through Canadian researchers like Geoffrey Hinton, Yoshua Bengio, and Richard Sutton. Yet the country has a major adoption gap: only 12% of businesses have formally integrated AI, and Canada ranks 42nd of 47 countries on public trust in AI systems. The strategy seeks to close this gap by investing billions in infrastructure, literacy, safety, and commercialization.",
+        "The strategy identifies five priority sectors where Canada believes it can build global leadership: health and life sciences, energy and natural resources, transportation, agriculture, and manufacturing and robotics. These sectors serve as focal points for investment and AI deployment across all six pillars of the strategy."
+      ],
+      "keyIdeas": [
+        {
+          "term": "AI for All",
+          "def": "The overarching vision that every Canadian, regardless of region, background, or stage of life, should be able to engage with and benefit from artificial intelligence."
+        },
+        {
+          "term": "Trust-Adoption Loop",
+          "def": "The strategy's core logic: Canadians must trust AI to adopt it, and adoption is what delivers economic and social benefits. Trust is the 'north star' of the strategy."
+        },
+        {
+          "term": "Adoption Gap",
+          "def": "The disconnect between Canada's world-class AI research and its low business adoption rate (12% of firms, 8% of SMEs), well behind Nordic and European peers."
+        },
+        {
+          "term": "Six Pillars",
+          "def": "The strategic framework organizing all actions: (1) Protecting Canadians, (2) Empowering Canadians, (3) Powering Shared Prosperity, (4) Building Sovereign AI Foundation, (5) Scaling Canadian Champions, (6) Building Global Alliances."
+        },
+        {
+          "term": "Priority Sectors",
+          "def": "Five sectors where Canada will concentrate investment: health and life sciences, energy and natural resources, transportation, agriculture, and manufacturing and robotics."
+        },
+        {
+          "term": "Sovereign AI",
+          "def": "AI infrastructure, models, and data systems that are built, operated, and governed under Canadian control and Canadian law, reducing dependence on foreign providers."
+        }
+      ],
+      "examples": [
+        {
+          "title": "A real-world illustration of the adoption gap",
+          "body": "Consider a mid-sized manufacturer in Ontario that knows AI-powered quality inspection could reduce defects by 30%. The owner has seen demos and even experimented with a generative AI tool. But integrating computer vision into a production line requires specialized expertise, upfront capital, and confidence that the system will work reliably. Without sector-specific guidance, affordable compute, and clear safety standards, the company stays on the sideline. This is the adoption gap the strategy is designed to close."
+        },
+        {
+          "title": "Spotlight: How the six pillars connect in a federal department",
+          "body": "Imagine a federal department responsible for processing immigration applications. Pillar 1 (Protection) ensures any AI used for decision-support meets privacy and fairness standards. Pillar 2 (Empowerment) provides training so case officers understand what the AI recommends and why. Pillar 3 (Prosperity) means the department acts as an anchor customer for a Canadian AI vendor. Pillar 4 (Sovereignty) ensures the system runs on Canadian cloud infrastructure. Pillar 5 (Champions) supports the vendor's growth. Pillar 6 (Alliances) allows standards alignment with allied nations. All six pillars work together."
+        }
+      ],
+      "exercises": [
+        {
+          "title": "Map the adoption gap in your own context",
+          "estimatedMinutes": 15,
+          "difficulty": "beginner",
+          "steps": [
+            "Step 1: Identify an organization you are familiar with (your employer, a local business, a government agency).",
+            "Step 2: List three tasks that AI could plausibly improve in that organization.",
+            "Step 3: For each task, note the barriers: Is it cost? Lack of expertise? Distrust? Regulatory uncertainty?",
+            "Step 4: Classify each barrier as primarily a trust issue, an opportunity issue, or a sovereignty issue using the strategy's framework.",
+            "Step 5: Write a one-paragraph summary of where the adoption gap is widest in your chosen organization."
+          ]
+        }
+      ],
+      "quiz": [
+        {
+          "q": "According to the strategy, what is the 'north star' that makes AI adoption possible?",
+          "opts": [
+            "Innovation",
+            "Trust",
+            "Investment",
+            "Regulation"
+          ],
+          "a": 1,
+          "why": "The strategy explicitly identifies trust as its north star. Trust is the foundation that enables broad, confident adoption. Innovation and investment are important, but without trust, citizens and businesses will not adopt AI at scale."
+        },
+        {
+          "q": "What percentage of Canadian businesses had formally integrated AI as of the strategy's release?",
+          "opts": [
+            "37%",
+            "24%",
+            "12%",
+            "60%"
+          ],
+          "a": 2,
+          "why": "Statistics Canada data cited in the strategy reports that only 12% of Canadian businesses used AI to produce goods or services between mid-2024 and mid-2025. The 60% figure is actually the adoption target for 2034, not the current state."
+        },
+        {
+          "q": "Which of the following is NOT one of Canada's five priority sectors in the AI strategy?",
+          "opts": [
+            "Health and Life Sciences",
+            "Financial Services",
+            "Agriculture",
+            "Manufacturing and Robotics"
+          ],
+          "a": 1,
+          "why": "The five priority sectors are health and life sciences, energy and natural resources, transportation, agriculture, and manufacturing and robotics. Financial services is not listed as a priority sector, though AI will impact it."
+        },
+        {
+          "q": "How many pillars make up the AI for All strategy?",
+          "opts": [
+            "Four",
+            "Five",
+            "Six",
+            "Eight"
+          ],
+          "a": 2,
+          "why": "The strategy is organized around six pillars: Protecting Canadians, Empowering Canadians, Powering Shared Prosperity, Building Sovereign AI Foundation, Scaling Canadian Champions, and Building Trusted Partnerships and Global Alliances."
+        },
+        {
+          "q": "What is the strategy's target for business AI adoption by 2034?",
+          "opts": [
+            "25%",
+            "40%",
+            "60%",
+            "80%"
+          ],
+          "a": 2,
+          "why": "The strategy sets a concrete target of increasing business AI adoption from 12% to 60% by 2034, with a particular focus on SMEs. This is an ambitious fivefold increase that drives much of the strategy's programming."
+        }
+      ],
+      "teach": "Explain the trust-adoption loop to a colleague who asks why Canada isn't just investing more money in AI companies. Use one specific example from a sector you know to show how trust, not just funding, is the bottleneck.",
+      "exercise": {
+        "title": "Map the adoption gap in your own context",
+        "estimatedMinutes": 15,
+        "difficulty": "beginner",
+        "steps": [
+          "Step 1: Identify an organization you are familiar with (your employer, a local business, a government agency).",
+          "Step 2: List three tasks that AI could plausibly improve in that organization.",
+          "Step 3: For each task, note the barriers: Is it cost? Lack of expertise? Distrust? Regulatory uncertainty?",
+          "Step 4: Classify each barrier as primarily a trust issue, an opportunity issue, or a sovereignty issue using the strategy's framework.",
+          "Step 5: Write a one-paragraph summary of where the adoption gap is widest in your chosen organization."
+        ]
+      }
+    },
+    {
+      "id": "m1",
+      "num": "01",
+      "title": "Pillar 1: Protecting Canadians and Safeguarding Democracy",
+      "chapter": "Pillar 1",
+      "minutes": 35,
+      "overview": [
+        "The first pillar establishes safety as the most fundamental form of trust. The strategy argues that citizens, workers, and institutions will not adopt technologies they perceive as dangerous. This pillar covers privacy modernization, online safety laws, election protection, and AI infrastructure safety — building the legal and institutional framework that makes confident adoption possible.",
+        "The risks addressed are concrete: deepfakes used for sexual violence, algorithmic bias in hiring and lending decisions, AI-generated disinformation undermining elections, and surveillance pricing using personal data. Canada plans to modernize consumer privacy legislation to enshrine a fundamental right to privacy, introduce online safety laws, and protect elections from AI-enabled interference.",
+        "On the infrastructure side, Canada will invest $50 million to expand the Canadian AI Safety Institute, develop AI transparency tools including content watermarking, and create a 'Canada Trusted AI Certification' program. The strategy also commits to working with frontier AI companies and law enforcement to protect against cybersecurity threats from advanced AI systems.",
+        "This pillar frames protection not as restricting innovation but as enabling it. A Canada that protects its people, democracy, and sovereign capabilities can move faster, not slower, because the population trusts the technology enough to adopt it broadly."
+      ],
+      "keyIdeas": [
+        {
+          "term": "Fundamental Right to Privacy",
+          "def": "The strategy commits to enshrining privacy as a fundamental right in modernized consumer privacy legislation, giving Canadians stronger control over their personal data."
+        },
+        {
+          "term": "Online Safety Laws",
+          "def": "New legislation to protect Canadians in the digital age, with particular emphasis on protecting children, combating deepfakes, and holding platforms accountable for online harms."
+        },
+        {
+          "term": "Canadian AI Safety Institute",
+          "def": "A federal body receiving $50 million to track emerging AI risks, advance technical safety research, and conduct transparent evaluations of AI models."
+        },
+        {
+          "term": "Canada Trusted AI Certification",
+          "def": "A planned certification program to help consumers and businesses identify AI products that meet Canadian trustworthiness standards."
+        },
+        {
+          "term": "AI Transparency",
+          "def": "Measures including watermarking of AI-generated content so Canadians can identify when they are interacting with AI systems or AI-produced material."
+        },
+        {
+          "term": "Surveillance Pricing",
+          "def": "The practice of using personal data to charge different prices to different consumers. The strategy commits to strengthening privacy laws to prevent this."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Deepfakes and democratic integrity",
+          "body": "During an election campaign, a realistic video appears online showing a candidate making inflammatory statements they never actually made. Without watermarking standards and online safety laws, this deepfake could spread virally before fact-checkers catch it, potentially shifting votes. The strategy's commitment to AI transparency tools and election protection addresses exactly this scenario — ensuring Canadians can identify synthetic content and hold its creators accountable."
+        },
+        {
+          "title": "Spotlight: AI certification in government procurement",
+          "body": "When a federal department procures an AI-powered tool for processing citizen applications, the Canada Trusted AI Certification would provide an objective benchmark. Procurement officers could verify that the system meets standards for fairness, transparency, and data protection before deployment. This reduces the risk of algorithmic bias in decisions affecting Canadians and gives the department confidence that the tool has been independently evaluated."
+        }
+      ],
+      "exercises": [
+        {
+          "title": "Evaluate an AI risk scenario",
+          "estimatedMinutes": 20,
+          "difficulty": "intermediate",
+          "steps": [
+            "Step 1: Choose one of these scenarios: (a) a hiring platform that uses AI to screen resumes, (b) a health app that uses AI to recommend treatments, (c) a social media platform using AI to moderate content.",
+            "Step 2: List three specific harms that could arise from the AI system in your chosen scenario.",
+            "Step 3: For each harm, identify which Pillar 1 action item from the strategy would address it (privacy legislation, online safety laws, AI Safety Institute, Trusted AI Certification, or transparency tools).",
+            "Step 4: Write a brief assessment: Are the strategy's proposed actions sufficient to address the risks you identified? What gaps remain?"
+          ]
+        }
+      ],
+      "quiz": [
+        {
+          "q": "According to the strategy, why is safety described as 'the most fundamental form of trust'?",
+          "opts": [
+            "Because safety regulations generate government revenue",
+            "Because people will not adopt technologies they consider dangerous to themselves and their communities",
+            "Because international partners require safety certification before trade agreements",
+            "Because AI companies prefer regulated markets for competitive advantage"
+          ],
+          "a": 1,
+          "why": "The strategy explicitly states that citizens, workers, and institutions will not adopt technologies they consider dangerous or harmful. Safety builds trust, and trust enables the broad adoption that delivers AI's benefits. The other options are not the strategy's rationale."
+        },
+        {
+          "q": "How much funding will the Canadian AI Safety Institute receive?",
+          "opts": [
+            "$25 million",
+            "$50 million",
+            "$100 million",
+            "$200 million"
+          ],
+          "a": 1,
+          "why": "The strategy commits $50 million to expand the Canadian AI Safety Institute's capabilities for tracking emerging risks, advancing technical research, and conducting transparent model evaluations."
+        },
+        {
+          "q": "Which of the following is a specific threat to democracy that the strategy identifies?",
+          "opts": [
+            "AI-generated music competing with Canadian artists",
+            "Autonomous vehicles replacing public transit workers",
+            "Deepfakes and AI-generated disinformation affecting elections",
+            "AI chatbots replacing customer service representatives"
+          ],
+          "a": 2,
+          "why": "The strategy specifically identifies deepfakes, synthetic media, and AI-generated disinformation as threats to elections, public discourse, and institutional trust. The other options, while relevant concerns, are not framed as threats to democracy in Pillar 1."
+        },
+        {
+          "q": "What is surveillance pricing?",
+          "opts": [
+            "Using cameras to monitor shoplifting in retail stores",
+            "Government monitoring of AI company pricing strategies",
+            "Using personal data to charge different prices to different consumers",
+            "AI-powered dynamic pricing based on supply and demand"
+          ],
+          "a": 2,
+          "why": "Surveillance pricing refers to using personal information to set individualized prices for consumers. The strategy commits to strengthening privacy laws to prevent this practice. It is distinct from standard dynamic pricing, which adjusts based on market conditions rather than personal data."
+        },
+        {
+          "q": "What is the purpose of the Canada Trusted AI Certification program?",
+          "opts": [
+            "To certify AI researchers for government employment",
+            "To help Canadians identify trustworthy AI products in the marketplace",
+            "To license companies to develop AI in Canada",
+            "To certify that AI systems will not replace human workers"
+          ],
+          "a": 1,
+          "why": "The certification program is designed to help consumers and businesses identify AI products that meet trustworthiness standards. It is a marketplace signal, not a licensing requirement or employment credential."
+        }
+      ],
+      "teach": "Explain to a small business owner who says 'AI regulation will just slow us down' why Pillar 1 argues that protection actually accelerates adoption. Use the example of how food safety standards built consumer trust in grocery stores.",
+      "exercise": {
+        "title": "Evaluate an AI risk scenario",
+        "estimatedMinutes": 20,
+        "difficulty": "intermediate",
+        "steps": [
+          "Step 1: Choose one of these scenarios: (a) a hiring platform that uses AI to screen resumes, (b) a health app that uses AI to recommend treatments, (c) a social media platform using AI to moderate content.",
+          "Step 2: List three specific harms that could arise from the AI system in your chosen scenario.",
+          "Step 3: For each harm, identify which Pillar 1 action item from the strategy would address it (privacy legislation, online safety laws, AI Safety Institute, Trusted AI Certification, or transparency tools).",
+          "Step 4: Write a brief assessment: Are the strategy's proposed actions sufficient to address the risks you identified? What gaps remain?"
+        ]
+      }
+    },
+    {
+      "id": "m2",
+      "num": "02",
+      "title": "Pillar 2: Empowering Canadians",
+      "chapter": "Pillar 2",
+      "minutes": 45,
+      "overview": [
+        "Pillar 2 addresses the human side of AI adoption. The strategy argues that benefits do not flow automatically from technology — they flow through citizens who understand AI, use it, and shape it. This pillar rests on three dimensions: literacy (understanding AI), opportunity (using AI to improve work and life), and participation (shaping how AI is used in communities and workplaces).",
+        "Canada faces a substantial literacy deficit. The country ranks 44th of 47 nations on AI training and literacy, and 42nd on trust in AI systems. Fewer than a quarter of Canadians report having received any AI training. The strategy responds with a National AI Literacy Initiative offering free training to all Canadians, reaching 1 million post-secondary students, training over 3,000 K-12 educators, and equipping public libraries as AI learning hubs.",
+        "On the opportunity front, the strategy projects that over 250,000 new AI-relevant jobs will be created by 2031, with up to 90,000 AI-related job placements for young Canadians. It commits to mid-career reskilling, work with colleges and polytechnics, and specific support for women in sectors most exposed to AI disruption. The strategy also champions a 'pro-worker' approach to industrial AI, designing technology to augment human expertise rather than replace it.",
+        "The pillar also addresses cultural inclusion, committing to protect and promote the French language in AI systems, support Indigenous-led AI initiatives for language preservation and land management, establish a $50 million Creative Technology Program for Canadian creators, and ensure AI reflects Accessible Canada Act principles. Gender-Based Analysis Plus will be applied across all policy design."
+      ],
+      "keyIdeas": [
+        {
+          "term": "National AI Literacy Initiative",
+          "def": "A federal program offering free, entry-level AI training accessible to all Canadians, including practical courses and sector-relevant modules delivered through multiple channels."
+        },
+        {
+          "term": "Three Dimensions of Empowerment",
+          "def": "The strategy's framework for citizen engagement: literacy (understanding AI), opportunity (benefiting from AI in work), and participation (shaping how AI is used in communities)."
+        },
+        {
+          "term": "Pro-Worker Industrial AI",
+          "def": "An approach where AI technology is designed to augment human expertise and move workers into higher-value roles, rather than simply replacing them."
+        },
+        {
+          "term": "AI Literacy Gap",
+          "def": "Canada's ranking of 44th out of 47 countries on AI training and literacy, with fewer than 25% of Canadians having received any AI training."
+        },
+        {
+          "term": "Creative Technology Program",
+          "def": "A $50 million initiative to support Canadian creators in using AI on their own terms, ensuring Canadian culture and creativity shape AI development."
+        },
+        {
+          "term": "Indigenous AI Leadership",
+          "def": "The strategy's commitment to supporting Indigenous-led AI initiatives including language models, land management tools, and cultural heritage systems built under Indigenous self-determination."
+        },
+        {
+          "term": "Gender-Based Analysis Plus (GBA+)",
+          "def": "An analytical framework applied across the strategy's policy design to ensure AI reflects Canadian values and leads to outcomes that are safe, inclusive, and beneficial for all."
+        }
+      ],
+      "examples": [
+        {
+          "title": "From literacy to opportunity in a community library",
+          "body": "A public library in rural Manitoba becomes a hub for AI learning through the National AI Literacy Initiative. Farmers attend evening sessions on precision agriculture tools, learning to identify which AI soil-mapping products are reliable and which are marketing hype. A retired teacher discovers she can use AI to create learning materials for her volunteer tutoring program. A young entrepreneur learns enough to prototype an AI-powered booking system for local tourism operators. Each person moves from understanding to using AI in ways that benefit their community."
+        },
+        {
+          "title": "Spotlight: Pro-worker AI in federal service delivery",
+          "body": "In a federal service delivery centre, rather than using AI to replace case workers, the department deploys AI to handle routine document verification and data entry. Case workers are freed to spend more time on complex cases requiring human judgment and empathy. The AI flags potential errors for human review rather than making final decisions. Workers receive training to oversee the AI system and provide feedback on its accuracy, ensuring they shape the tool rather than being shaped by it."
+        }
+      ],
+      "exercises": [
+        {
+          "title": "Design an AI literacy session for your community",
+          "estimatedMinutes": 20,
+          "difficulty": "beginner",
+          "steps": [
+            "Step 1: Choose an audience you could realistically reach (colleagues, a community group, family members, students).",
+            "Step 2: Identify their most likely concerns about AI (job loss, privacy, misinformation, being left behind).",
+            "Step 3: Plan a 30-minute session covering: what AI actually does (not magic), one practical use case relevant to them, and one risk they should watch for.",
+            "Step 4: List two 'hands-on' activities where participants would interact with an AI tool during the session.",
+            "Step 5: Write a one-sentence takeaway you want every participant to remember."
+          ]
+        },
+        {
+          "title": "Assess pro-worker vs. replacement AI in a workplace",
+          "estimatedMinutes": 15,
+          "difficulty": "intermediate",
+          "steps": [
+            "Step 1: Identify a workplace task that AI could automate (document processing, scheduling, data analysis, etc.).",
+            "Step 2: Describe the 'replacement' approach: AI does the task entirely, human role eliminated.",
+            "Step 3: Describe the 'pro-worker' approach: AI handles the routine portion, humans do the complex judgment work.",
+            "Step 4: Compare the two approaches on three criteria: quality of output, worker satisfaction, and organizational risk.",
+            "Step 5: Write a recommendation for which approach the organization should adopt, with justification."
+          ]
+        }
+      ],
+      "quiz": [
+        {
+          "q": "Where does Canada rank globally on AI training and literacy?",
+          "opts": [
+            "5th of 47 countries",
+            "15th of 47 countries",
+            "30th of 47 countries",
+            "44th of 47 countries"
+          ],
+          "a": 3,
+          "why": "Canada ranks 44th of 47 countries on AI training and literacy according to the KPMG-University of Melbourne global trust study cited in the strategy. This low ranking is a key motivation for the National AI Literacy Initiative."
+        },
+        {
+          "q": "How many AI-related job opportunities does the strategy aim to create for young Canadians?",
+          "opts": [
+            "25,000",
+            "50,000",
+            "90,000",
+            "250,000"
+          ],
+          "a": 2,
+          "why": "The strategy targets up to 90,000 AI-related job and work placement opportunities through programs like the Student Work Placement Program, Canada Summer Jobs, Skills for Success, and Mitacs. The 250,000 figure refers to total new jobs created through AI adoption economy-wide."
+        },
+        {
+          "q": "What are the three dimensions of empowerment in the strategy?",
+          "opts": [
+            "Research, development, and deployment",
+            "Literacy, opportunity, and participation",
+            "Education, employment, and entrepreneurship",
+            "Safety, security, and sovereignty"
+          ],
+          "a": 1,
+          "why": "The three dimensions are literacy (understanding AI), opportunity (AI expanding personal and working lives), and participation (Canadians actively shaping how AI is used). These form the framework for all Pillar 2 actions."
+        },
+        {
+          "q": "What is the purpose of the $50 million Creative Technology Program?",
+          "opts": [
+            "To fund AI startups in the entertainment sector",
+            "To support Canadian creators in using AI on their own terms",
+            "To develop AI-generated Canadian content for export",
+            "To replace traditional arts funding with technology grants"
+          ],
+          "a": 1,
+          "why": "The Creative Technology Program is specifically designed to support Canadian creators in using AI on their own terms, ensuring that Canadian culture, heritage, and creative expression are reflected in AI development."
+        },
+        {
+          "q": "In an OECD survey cited by the strategy, what percentage of workers using AI reported improved performance?",
+          "opts": [
+            "50%",
+            "65%",
+            "80%",
+            "95%"
+          ],
+          "a": 2,
+          "why": "The strategy cites an OECD survey of manufacturing and finance workers across seven countries where 80% said AI improved their performance. AI users were also four times more likely to report gains in job satisfaction and wellbeing."
+        },
+        {
+          "q": "How does the strategy plan to reach rural, remote, and northern communities with AI literacy?",
+          "opts": [
+            "By requiring AI companies to offer free rural training",
+            "By empowering public libraries and community organizations as AI learning hubs",
+            "By launching a dedicated rural AI satellite internet service",
+            "By relocating AI researchers to northern communities"
+          ],
+          "a": 1,
+          "why": "The strategy identifies public libraries and community organizations as 'natural partners' to bring AI literacy into every community, especially those in rural, remote, and northern regions. Libraries are described as 'long trusted as hubs for learning.'"
+        },
+        {
+          "q": "What does 'pro-worker industrial AI' mean in the strategy?",
+          "opts": [
+            "AI systems that are built exclusively by unionized workers",
+            "Technology designed to augment human expertise and move workers into higher-value roles",
+            "AI tools that track worker productivity to increase output",
+            "Government subsidies for companies that do not lay off workers due to AI"
+          ],
+          "a": 1,
+          "why": "Pro-worker AI means technology is designed to augment human expertise rather than displace it, helping workers move into higher-value roles while delivering productivity gains. The strategy uses Quebec's Maya HTT as an example where AI increased throughput by 17% while creating over 1,000 jobs."
+        }
+      ],
+      "teach": "Explain to a mid-career professional who is worried about AI taking their job how the three dimensions of empowerment (literacy, opportunity, participation) give them a path forward. Use a specific example from their industry if possible.",
+      "exercise": {
+        "title": "Design an AI literacy session for your community",
+        "estimatedMinutes": 20,
+        "difficulty": "beginner",
+        "steps": [
+          "Step 1: Choose an audience you could realistically reach (colleagues, a community group, family members, students).",
+          "Step 2: Identify their most likely concerns about AI (job loss, privacy, misinformation, being left behind).",
+          "Step 3: Plan a 30-minute session covering: what AI actually does (not magic), one practical use case relevant to them, and one risk they should watch for.",
+          "Step 4: List two 'hands-on' activities where participants would interact with an AI tool during the session.",
+          "Step 5: Write a one-sentence takeaway you want every participant to remember."
+        ]
+      }
+    },
+    {
+      "id": "m3",
+      "num": "03",
+      "title": "Pillar 3: Powering Shared Prosperity",
+      "chapter": "Pillar 3",
+      "minutes": 40,
+      "overview": [
+        "Pillar 3 translates AI adoption into broad-based economic gains. The strategy defines shared prosperity as an economy where productivity gains flow into paychecks rather than just profits, and where every region and community experiences AI's benefits. The central challenge is that 99% of Canadian businesses are micro, small, or medium-sized enterprises, yet only one in eight has formally integrated AI.",
+        "The strategy identifies this as a 'translation problem' rather than resistance: 78% of non-adopting firms report that they do not see how AI benefits their operations. The response is multi-pronged: $500 million through BDC's LIFT program for SME financing, $500 million for Regional AI Initiatives through Regional Development Agencies, AI readiness assessment tools, and tax incentives including the SR&ED credit and a new Productivity Super-Deduction.",
+        "A signature initiative is the AI Missions Program, which takes a mission-driven approach to connect researchers, companies, and government around concrete national challenges. The first mission commits $200 million to improving health outcomes, with subsequent missions in other priority sectors. This approach aims to make AI tangible — showing Canadians it improves their lives rather than being an abstract threat.",
+        "The strategy also positions government as an anchor adopter of Canadian AI. Through the Office of Digital Transformation, federal departments will accelerate AI procurement and deployment, maintaining human-in-the-loop oversight. The Prime Minister's Innovation Fellows Program will recruit technical talent into government to build internal capacity for evaluating and deploying AI systems."
+      ],
+      "keyIdeas": [
+        {
+          "term": "Shared Prosperity",
+          "def": "An economy where AI productivity gains flow broadly — into paychecks, better services, and regional growth — rather than concentrating in a small number of firms or locations."
+        },
+        {
+          "term": "Translation Problem",
+          "def": "The root cause of low SME adoption: 78% of non-adopting firms say they don't see how AI benefits their operations. The gap is between awareness and practical application."
+        },
+        {
+          "term": "LIFT Program",
+          "def": "A $500 million Business Development Bank of Canada initiative to help SMEs access financing for incorporating AI tools into their operations."
+        },
+        {
+          "term": "AI Missions Program",
+          "def": "A mission-driven approach that aligns capital, talent, and partnerships behind clear, measurable targets in priority sectors, starting with $200 million for healthcare."
+        },
+        {
+          "term": "Regional AI Initiative",
+          "def": "A $500 million expansion delivered through Regional Development Agencies to accelerate AI adoption and commercialization across all regions of Canada."
+        },
+        {
+          "term": "Human-in-the-Loop",
+          "def": "The government's approach to AI in public services: AI supports decision-making but humans maintain oversight of meaningful decisions and tasks."
+        }
+      ],
+      "examples": [
+        {
+          "title": "AI on the farm: precision agriculture in Saskatchewan",
+          "body": "Jonathan Adams, a grain farmer near Yorkton, Saskatchewan, uses data-driven soil maps from Saskatoon-based Croptimistic to divide his fields into ten zones based on soil, water, and topography. More fertilizer goes to productive zones, less to saline patches that would waste it. The result is higher crop yields with lower input costs. This is the kind of practical, sector-specific AI application that solves a real problem with proven value — exactly what the strategy says Canadian businesses need to bridge the adoption gap."
+        },
+        {
+          "title": "Spotlight: The AI Missions approach in federal healthcare",
+          "body": "The first AI Mission commits $200 million to improving health outcomes. In practice, this could mean connecting a Toronto hospital's patient monitoring AI (like CHARTWatch, which reduced unexpected ward deaths by 26%) with federal health data infrastructure, provincial clinical networks, and Canadian AI companies. Researchers develop the models, companies commercialize them, government provides data and procurement demand, and patients see fewer ER delays and better outcomes. The mission approach knits these pieces together around a measurable goal."
+        }
+      ],
+      "exercises": [
+        {
+          "title": "Diagnose the translation problem for a specific business",
+          "estimatedMinutes": 20,
+          "difficulty": "intermediate",
+          "steps": [
+            "Step 1: Choose a type of SME you know well (a bakery, a law firm, a construction company, a retail shop).",
+            "Step 2: Identify three AI applications that could realistically improve their operations (be specific: not 'use AI' but 'use AI to forecast ingredient demand and reduce waste').",
+            "Step 3: For each application, write one sentence explaining the business benefit in language the owner would understand.",
+            "Step 4: Identify which strategy program would help this SME adopt each application (LIFT financing, Regional AI Initiative, AI readiness assessment, etc.).",
+            "Step 5: Draft a one-paragraph 'pitch' to the business owner explaining why and how to start."
+          ]
+        },
+        {
+          "title": "Design an AI mission for a sector you know",
+          "estimatedMinutes": 25,
+          "difficulty": "advanced",
+          "steps": [
+            "Step 1: Choose a priority sector (health, energy, transportation, agriculture, or manufacturing).",
+            "Step 2: Define a specific, measurable mission target (e.g., 'reduce emergency room wait times by 20% in 5 years').",
+            "Step 3: Identify the key stakeholders who need to be aligned (researchers, companies, government bodies, frontline workers).",
+            "Step 4: Describe what each stakeholder contributes and what they gain.",
+            "Step 5: Explain how success would be measured and reported to Canadians."
+          ]
+        }
+      ],
+      "quiz": [
+        {
+          "q": "What does the strategy identify as the primary reason most Canadian businesses have not adopted AI?",
+          "opts": [
+            "They cannot afford the technology",
+            "They do not see how AI benefits their specific operations",
+            "Government regulations prevent them from using AI",
+            "They are waiting for Canadian-made AI products"
+          ],
+          "a": 1,
+          "why": "Statistics Canada data shows 78% of non-adopting firms report not seeing how AI benefits the goods or services they provide. The strategy calls this a 'translation problem' — not resistance, but a gap between AI's general promise and specific business applications."
+        },
+        {
+          "q": "How much is committed to the first AI Mission in healthcare?",
+          "opts": [
+            "$50 million",
+            "$100 million",
+            "$200 million",
+            "$500 million"
+          ],
+          "a": 2,
+          "why": "The strategy commits $200 million to the first AI Mission focused on improving health outcomes for Canadians. More missions will follow in other priority sectors."
+        },
+        {
+          "q": "What is the LIFT program?",
+          "opts": [
+            "A $500 million BDC initiative to help SMEs finance AI adoption",
+            "A $200 million health technology research fund",
+            "A tax credit for AI hardware purchases",
+            "A government accelerator for AI startups"
+          ],
+          "a": 0,
+          "why": "LIFT is a $500 million initiative from the Business Development Bank of Canada specifically designed to help Canadian SMEs access financing to incorporate AI tools into their operations."
+        },
+        {
+          "q": "What approach does the strategy take to AI in public services?",
+          "opts": [
+            "Fully automated decision-making to reduce costs",
+            "No AI use in government until all risks are eliminated",
+            "Human-in-the-loop oversight of meaningful decisions",
+            "AI decision-making with annual audits"
+          ],
+          "a": 2,
+          "why": "The strategy commits to a human-in-the-loop approach, where AI supports public servants by reducing administrative burden but humans maintain strong oversight of meaningful decisions and tasks."
+        },
+        {
+          "q": "What is the Prime Minister's Innovation Fellows Program?",
+          "opts": [
+            "A scholarship for AI PhD students",
+            "A program to recruit technical talent into government for AI deployment",
+            "An award for Canadian AI entrepreneurs",
+            "A fellowship for AI researchers at national institutes"
+          ],
+          "a": 1,
+          "why": "The Innovation Fellows Program is designed to recruit and deploy technical talent that builds the internal capacity, operational expertise, and commercial fluency needed to procure, evaluate, and deploy AI systems effectively within government."
+        },
+        {
+          "q": "What percentage of Canadian businesses are micro, small, or medium-sized enterprises?",
+          "opts": [
+            "75%",
+            "85%",
+            "95%",
+            "99%"
+          ],
+          "a": 3,
+          "why": "SMEs represent 99% of Canadian businesses and employ 14.3 million workers. This is why SME adoption is so central to the strategy — reaching them means reaching nearly the entire business landscape."
+        }
+      ],
+      "teach": "Explain to a municipal councillor what the 'translation problem' is and why it matters more than the technology itself. Use a local government example (waste collection, building permits, snow clearing) to illustrate how mission-driven AI adoption works.",
+      "exercise": {
+        "title": "Diagnose the translation problem for a specific business",
+        "estimatedMinutes": 20,
+        "difficulty": "intermediate",
+        "steps": [
+          "Step 1: Choose a type of SME you know well (a bakery, a law firm, a construction company, a retail shop).",
+          "Step 2: Identify three AI applications that could realistically improve their operations (be specific: not 'use AI' but 'use AI to forecast ingredient demand and reduce waste').",
+          "Step 3: For each application, write one sentence explaining the business benefit in language the owner would understand.",
+          "Step 4: Identify which strategy program would help this SME adopt each application (LIFT financing, Regional AI Initiative, AI readiness assessment, etc.).",
+          "Step 5: Draft a one-paragraph 'pitch' to the business owner explaining why and how to start."
+        ]
+      }
+    },
+    {
+      "id": "m4",
+      "num": "04",
+      "title": "Pillar 4: Building the Canadian Sovereign AI Foundation",
+      "chapter": "Pillar 4",
+      "minutes": 45,
+      "overview": [
+        "Pillar 4 addresses the infrastructure gap that threatens Canada's AI sovereignty. While Canada's research legacy is world-class — Geoffrey Hinton, Yoshua Bengio, and Richard Sutton all did foundational work in Canada — much of the infrastructure that turns research into working systems sits beyond Canadian borders. Researchers train models on foreign clouds, companies store sensitive data in foreign jurisdictions, and government operations depend on infrastructure Canada does not own.",
+        "The strategy responds with a 'build-partner-buy' approach to sovereign infrastructure. Canada will build a world-leading public supercomputer, leverage government workloads to expand sovereign compute and cloud capacity, and invest in high-capacity fibre and satellite connectivity. Partnerships are being finalized to deliver 850 megawatts of compute capacity by 2030, with potential scaling to 2.3 gigawatts — backed by investments in the tens of billions.",
+        "Data is treated as a strategic national asset. The strategy commits $100 million to launch a Health Sector Data Space linking secure datasets for clinical trials and research, plus $100 million to expand the VITAL health data platform across five additional provinces. These investments aim to unlock the vast data generated by Canada's universal healthcare system while maintaining strong privacy protections.",
+        "The talent dimension is equally critical. Canada will increase the Canada CIFAR AI Chairs program from 130 to nearly 200 researchers, expand the Global Talent Stream for AI workers, and align permanent residency pathways to retain recruited talent. These efforts complement the government's broader $1.7 billion talent attraction strategy. Canada's structural advantages — clean energy (83% renewable), cold climate for natural cooling, and rich sector-specific data — make it uniquely positioned to build sustainable AI infrastructure."
+      ],
+      "keyIdeas": [
+        {
+          "term": "Build-Partner-Buy",
+          "def": "Canada's approach to AI infrastructure: build domestically where possible, partner with trusted allies where strategic, and buy market solutions where appropriate."
+        },
+        {
+          "term": "Sovereign Compute",
+          "def": "Data centre and cloud capacity that is owned, operated, and governed under Canadian control and Canadian law, not dependent on foreign platforms."
+        },
+        {
+          "term": "Health Sector Data Space",
+          "def": "A $100 million initiative in partnership with CIHI to link secure, standardized health datasets for clinical trials, health services research, and performance measurement."
+        },
+        {
+          "term": "VITAL Platform",
+          "def": "A pan-Canadian health data platform connecting clinical data from hospitals across provinces, receiving $100 million to expand to five additional provinces."
+        },
+        {
+          "term": "Canada CIFAR AI Chairs",
+          "def": "A program anchoring world-class AI researchers in Canada, expanding from 130 to nearly 200 chairs to strengthen the national AI talent base."
+        },
+        {
+          "term": "Compute Access Fund",
+          "def": "A fund providing $700 million in affordable sovereign compute for Canadian SMEs, enabling them to train, test, and deploy models on Canadian infrastructure."
+        },
+        {
+          "term": "Clean Energy Advantage",
+          "def": "Over 83% of Canada's electricity comes from renewable and low-emission sources, making Canadian data centres among the most sustainable in the world."
+        },
+        {
+          "term": "Global Talent Stream",
+          "def": "An immigration pathway being expanded to accelerate entry of highly-skilled AI workers, with aligned permanent residency measures to retain them."
+        }
+      ],
+      "examples": [
+        {
+          "title": "Why sovereign compute matters: the dependency risk",
+          "body": "Consider a Canadian healthcare AI startup that trains its diagnostic models on a foreign cloud platform. If that platform's government changes its data access rules, imposes export controls, or experiences a geopolitical dispute with Canada, the startup could lose access to its own models, training data, or computing power overnight. Sovereign compute means this startup could instead train on Canadian infrastructure under Canadian law, ensuring continuity regardless of international politics."
+        },
+        {
+          "title": "Spotlight: VITAL unlocking federal health data for AI innovation",
+          "body": "Canada's universal healthcare system generates enormous clinical data that has been locked in institutional silos. VITAL connects this data across hospitals and provinces while maintaining strict privacy controls. A federal health department could use this platform to identify pandemic patterns across regions, track the effectiveness of new treatments in real time, or help Canadian AI companies develop diagnostic tools trained on representative Canadian patient data. Over 80 Canadian companies are already working with health data and AI through this infrastructure."
+        }
+      ],
+      "exercises": [
+        {
+          "title": "Map the sovereign infrastructure gaps in your sector",
+          "estimatedMinutes": 20,
+          "difficulty": "intermediate",
+          "steps": [
+            "Step 1: Choose a sector you know well (healthcare, energy, transportation, agriculture, or government services).",
+            "Step 2: List the three most important data assets in that sector (e.g., patient records, grid performance data, logistics data).",
+            "Step 3: For each data asset, identify where it is currently stored and processed (Canadian infrastructure, foreign cloud, hybrid).",
+            "Step 4: Assess the risk: What could go wrong if a foreign government restricted access to that infrastructure?",
+            "Step 5: Propose a 'build-partner-buy' strategy for each data asset using the strategy's framework."
+          ]
+        },
+        {
+          "title": "Calculate Canada's clean energy advantage for data centres",
+          "estimatedMinutes": 15,
+          "difficulty": "beginner",
+          "steps": [
+            "Step 1: Note that 83% of Canada's electricity comes from renewable and low-emission sources.",
+            "Step 2: Research (or estimate) what percentage of electricity in two other major data centre markets (e.g., the US and Singapore) comes from renewables.",
+            "Step 3: The strategy says renewable-powered data centres reduce operating emissions by up to 90%. Calculate the relative emissions advantage for a 100-megawatt data centre in Canada versus your comparison countries.",
+            "Step 4: Add Canada's cold climate advantage (reduced cooling costs). Write a brief investment case for why a company should locate AI infrastructure in Canada."
+          ]
+        }
+      ],
+      "quiz": [
+        {
+          "q": "What is Canada's 'build-partner-buy' approach to AI infrastructure?",
+          "opts": [
+            "Build everything domestically, partner only in emergencies, never buy foreign",
+            "Build key sovereign capabilities domestically, partner with allies, buy market solutions when appropriate",
+            "Buy foreign technology first, partner to customize it, then build copies domestically",
+            "Build only what is commercially profitable, partner for research, buy the rest"
+          ],
+          "a": 1,
+          "why": "The build-partner-buy approach prioritizes domestic construction of key sovereign capabilities while recognizing that partnering with trusted allies and purchasing existing solutions are appropriate in many cases. It is pragmatic, not absolutist."
+        },
+        {
+          "q": "How much sovereign compute capacity is Canada targeting by 2030?",
+          "opts": [
+            "100 megawatts with scaling to 500 megawatts",
+            "500 megawatts with scaling to 1 gigawatt",
+            "850 megawatts with scaling capacity of up to 2.3 gigawatts",
+            "5.5 gigawatts of total compute"
+          ],
+          "a": 2,
+          "why": "Partnerships being finalized propose 850 megawatts of compute capacity by 2030, with scaling capacity of up to 2.3 gigawatts. The 5.5 GW figure is the estimated total AI compute need for commercial players, most of which will come from hyperscalers."
+        },
+        {
+          "q": "What percentage of Canada's electricity comes from renewable and low-emission sources?",
+          "opts": [
+            "55%",
+            "67%",
+            "75%",
+            "83%"
+          ],
+          "a": 3,
+          "why": "More than 83% of Canada's electricity comes from renewable and low-emission sources, primarily hydro, nuclear, and wind. This gives Canadian data centres a major sustainability advantage."
+        },
+        {
+          "q": "How many Canada CIFAR AI Chairs will the expanded program support?",
+          "opts": [
+            "100",
+            "130",
+            "Nearly 200",
+            "250"
+          ],
+          "a": 2,
+          "why": "The strategy increases the Canada CIFAR AI Chairs program from 130 to nearly 200 researchers, anchoring more world-class AI talent in Canada."
+        },
+        {
+          "q": "Why does the strategy call data a 'strategic national asset'?",
+          "opts": [
+            "Because data can be sold to generate government revenue",
+            "Because AI systems depend on quality data, and Canada generates vast volumes across critical sectors",
+            "Because other countries want to buy Canadian data",
+            "Because data storage creates jobs in the construction sector"
+          ],
+          "a": 1,
+          "why": "AI is only as powerful as the data it can access. Canada generates enormous valuable data across health, energy, transportation, and other sectors, but much of it remains siloed and inaccessible. Treating it as a strategic asset means mobilizing it responsibly to fuel innovation."
+        },
+        {
+          "q": "What is VITAL?",
+          "opts": [
+            "A Canadian AI safety testing laboratory",
+            "A pan-Canadian health data platform connecting clinical data across provinces",
+            "A venture capital fund for health AI startups",
+            "A federal database of AI companies in Canada"
+          ],
+          "a": 1,
+          "why": "VITAL is a pan-Canadian health data platform designed to connect clinical data from hospitals across multiple provinces, enabling AI-driven health research, novel therapy discovery, and clinical trial support."
+        },
+        {
+          "q": "How much additional sovereign compute will the Compute Access Fund provide to SMEs?",
+          "opts": [
+            "$100 million",
+            "$300 million",
+            "$500 million",
+            "$700 million"
+          ],
+          "a": 3,
+          "why": "The strategy provides $700 million in affordable sovereign compute through an expansion of the Compute Access Fund, enabling Canadian SMEs to train, test, and deploy models on Canadian infrastructure rather than foreign cloud platforms."
+        }
+      ],
+      "teach": "Explain to a tech startup founder why they should care about sovereign compute even though foreign cloud platforms are currently cheaper and more convenient. Use the analogy of a restaurant that rents its kitchen from a landlord who could change the terms at any time.",
+      "exercise": {
+        "title": "Map the sovereign infrastructure gaps in your sector",
+        "estimatedMinutes": 20,
+        "difficulty": "intermediate",
+        "steps": [
+          "Step 1: Choose a sector you know well (healthcare, energy, transportation, agriculture, or government services).",
+          "Step 2: List the three most important data assets in that sector (e.g., patient records, grid performance data, logistics data).",
+          "Step 3: For each data asset, identify where it is currently stored and processed (Canadian infrastructure, foreign cloud, hybrid).",
+          "Step 4: Assess the risk: What could go wrong if a foreign government restricted access to that infrastructure?",
+          "Step 5: Propose a 'build-partner-buy' strategy for each data asset using the strategy's framework."
+        ]
+      }
+    }
+  ]
+};
+
+const MODULES_2 = [
+  {
+    "id": "m5",
+    "num": "05",
+    "title": "Pillar 5: Scaling Canadian Champions",
+    "chapter": "Pillar 5",
+    "minutes": 40,
+    "overview": [
+      "Pillar 5 confronts an uncomfortable reality: too many promising Canadian AI companies grow elsewhere. Nearly 70% of Canadian-led startups end up headquartered outside the country. The proximity to the US technology market has historically made it rational for firms to move south to capture customers and capital. Canada's research leads the world, but the companies built on it too often scale under other flags.",
+      "The strategy responds by rebuilding the investment flywheel. A $500 million Canadian Tech Growth Fund will provide flexible growth capital and, at times, equity stakes in the most promising Canadian AI firms. This follows the example of France, Japan, and the US in treating leading technology companies as strategic assets worth government investment. An additional $1.75 billion in Budget 2025 commitments will stimulate venture capital and address access-to-capital gaps.",
+      "Commercialization on Canadian infrastructure is a priority. The strategy invests $700 million through the Compute Access Fund so SMEs can build products on sovereign compute, and $130 million for commercialization programs at the National AI Institutes including Founders-in-Residence programs. The Mila-Inovia Venture Scientist Fund, a US$100 million early-stage fund launched in January 2026, provides a model for moving frontier research to company creation.",
+      "The strategy also positions government as a strategic anchor customer, leveraging the Buy Canadian policy to give domestic AI companies the revenue and validation they need to compete globally. Foundation models are treated as strategic infrastructure — Canada will anchor its homegrown foundation model capabilities at home, citing Cohere (enterprise AI) and LawZero (safe-by-design AI research) as examples of Canadian frontier capability."
+    ],
+    "keyIdeas": [
+      {
+        "term": "Canadian Tech Growth Fund",
+        "def": "A $500 million fund providing flexible growth capital and enabling government equity stakes in promising Canadian AI firms to keep them anchored in Canada."
+      },
+      {
+        "term": "Brain Drain / Company Drain",
+        "def": "The pattern where nearly 70% of Canadian-led startups end up headquartered abroad, typically moving to the US for customers and capital."
+      },
+      {
+        "term": "Anchor Customer",
+        "def": "The government's role as a strategic purchaser of Canadian AI solutions, providing domestic companies with revenue and market validation for global export."
+      },
+      {
+        "term": "Foundation Models as Strategic Infrastructure",
+        "def": "The strategy's position that AI foundation models — the base layer for thousands of applications — are strategic assets that Canada must develop and retain domestically."
+      },
+      {
+        "term": "Venture Scientist Fund",
+        "def": "A US$100 million early-stage venture capital fund launched by Mila and Inovia Capital to convert frontier research into Canadian-headquartered companies."
+      },
+      {
+        "term": "Buy Canadian Policy",
+        "def": "A procurement preference that gives domestic AI companies access to government contracts, providing the scale-up revenue needed to compete globally."
+      }
+    ],
+    "examples": [
+      {
+        "title": "The company drain: why Canadian startups leave",
+        "body": "A Canadian AI startup develops a breakthrough natural language processing tool at a university lab in Montreal. To raise its Series B round, investors in Silicon Valley offer terms contingent on relocating headquarters to San Francisco, where customers are closer and follow-on capital is easier to access. Without competitive domestic growth capital, a strong government customer base, or affordable Canadian compute, the rational choice is to leave. The Canadian Tech Growth Fund and anchor customer strategy aim to change this calculus by ensuring the rational choice is to stay."
+      },
+      {
+        "title": "Spotlight: Government as anchor customer for Canadian AI",
+        "body": "When a federal department needs an AI-powered translation tool for bilingual services, the Buy Canadian policy means it evaluates Canadian solutions first. A Canadian enterprise AI company wins the contract, gaining both revenue and a referenceable government deployment. That reference unlocks doors with other governments and enterprises internationally. The department gets a solution built under Canadian law with Canadian data sovereignty, and the company stays and grows in Canada rather than seeking its first major customer abroad."
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Build the case for keeping a startup in Canada",
+        "estimatedMinutes": 20,
+        "difficulty": "intermediate",
+        "steps": [
+          "Step 1: Create a fictional AI startup profile: name, product, stage (seed/Series A/Series B), number of employees, primary market.",
+          "Step 2: List the top three reasons this startup's founders would consider relocating abroad.",
+          "Step 3: For each reason, identify which strategy initiative directly addresses it (Tech Growth Fund, Buy Canadian, Compute Access Fund, etc.).",
+          "Step 4: Calculate a rough 'stay vs. go' comparison: What does the startup gain by staying in Canada versus moving?",
+          "Step 5: Write a one-page memo to the founders making the case for scaling from Canada."
+        ]
+      },
+      {
+        "title": "Design an anchor customer strategy for a government department",
+        "estimatedMinutes": 25,
+        "difficulty": "advanced",
+        "steps": [
+          "Step 1: Choose a federal department and identify one operational challenge that AI could address.",
+          "Step 2: Search for (or imagine) two Canadian AI companies that could provide a solution.",
+          "Step 3: Outline the procurement approach: How would the department evaluate Canadian solutions while meeting value-for-money requirements?",
+          "Step 4: Describe the benefits to both the department (better service) and the company (revenue, validation, reference customer).",
+          "Step 5: Identify potential risks and how the 'Canada Trusted AI Certification' from Pillar 1 could mitigate them."
+        ]
+      }
+    ],
+    "quiz": [
+      {
+        "q": "What percentage of Canadian-led startups end up headquartered outside the country?",
+        "opts": [
+          "30%",
+          "50%",
+          "Nearly 70%",
+          "85%"
+        ],
+        "a": 2,
+        "why": "The strategy cites that nearly 70% of Canadian-led startups end up headquartered outside the country, which is the core problem Pillar 5 aims to solve by changing the investment and scaling conditions in Canada."
+      },
+      {
+        "q": "What is the Canadian Tech Growth Fund?",
+        "opts": [
+          "A $100 million grant program for AI research",
+          "A $500 million fund providing flexible growth capital with optional government equity stakes",
+          "A $1 billion sovereign wealth fund for all technology sectors",
+          "A tax incentive for angel investors in AI startups"
+        ],
+        "a": 1,
+        "why": "The Canadian Tech Growth Fund is a $500 million initiative providing flexible growth capital and investment support, enabling the government to take equity stakes in the most promising Canadian AI firms to help them attract private capital and remain anchored in Canada."
+      },
+      {
+        "q": "What is Cohere's core differentiator in the AI market?",
+        "opts": [
+          "Consumer-facing chatbot applications",
+          "Open-source foundation model development",
+          "Enterprise and government AI with ability to handle sensitive data in secure settings",
+          "AI-powered social media content moderation"
+        ],
+        "a": 2,
+        "why": "Cohere, founded in Toronto in 2019, commercializes large language models exclusively for enterprise and government use. Its core differentiator is handling sensitive data in the most secure settings, which is in growing demand from businesses and governments in regulated industries."
+      },
+      {
+        "q": "What is LawZero's mission?",
+        "opts": [
+          "Building the fastest AI models for legal document processing",
+          "Developing safe-by-design AI systems to provide oversight for agentic AI",
+          "Creating AI-powered legal services for underserved communities",
+          "Lobbying for AI regulation in the Canadian Parliament"
+        ],
+        "a": 1,
+        "why": "LawZero, founded by Turing Award winner Yoshua Bengio and incubated at Mila, is a nonprofit developing safe-by-design AI systems intended to provide oversight for the agentic systems being deployed by frontier labs worldwide."
+      },
+      {
+        "q": "How does the 'Buy Canadian' policy support AI companies?",
+        "opts": [
+          "By banning foreign AI products from the Canadian market",
+          "By providing domestic scale-ups with government revenue and validation for global export",
+          "By requiring all Canadians to use Canadian-made AI tools",
+          "By imposing tariffs on imported AI services"
+        ],
+        "a": 1,
+        "why": "The Buy Canadian policy establishes the federal government as a strategic anchor customer, providing domestic AI companies with the revenue and market validation they need to successfully export their solutions globally. It does not ban foreign products."
+      },
+      {
+        "q": "Where does Canada rank globally in AI venture capital?",
+        "opts": [
+          "2nd",
+          "5th",
+          "10th",
+          "15th"
+        ],
+        "a": 1,
+        "why": "Canada ranks 5th globally in AI venture capital with $3.1 billion invested in 2025. While this is strong, investments are concentrated in a limited number of deals, and global trade uncertainty creates additional pressures."
+      }
+    ],
+    "teach": "Explain to a venture capitalist why the Canadian government taking equity stakes in AI companies is not 'picking winners' but rather a strategic investment similar to what France, Japan, and the US already do. Use a specific example of a Canadian company that might benefit.",
+    "exercise": {
+      "title": "Build the case for keeping a startup in Canada",
+      "estimatedMinutes": 20,
+      "difficulty": "intermediate",
+      "steps": [
+        "Step 1: Create a fictional AI startup profile: name, product, stage (seed/Series A/Series B), number of employees, primary market.",
+        "Step 2: List the top three reasons this startup's founders would consider relocating abroad.",
+        "Step 3: For each reason, identify which strategy initiative directly addresses it (Tech Growth Fund, Buy Canadian, Compute Access Fund, etc.).",
+        "Step 4: Calculate a rough 'stay vs. go' comparison: What does the startup gain by staying in Canada versus moving?",
+        "Step 5: Write a one-page memo to the founders making the case for scaling from Canada."
+      ]
+    }
+  },
+  {
+    "id": "m6",
+    "num": "06",
+    "title": "Pillar 6: Building Trusted Partnerships and Global Alliances",
+    "chapter": "Pillar 6",
+    "minutes": 35,
+    "overview": [
+      "Pillar 6 recognizes that AI is a game of scale dominated by a small number of massive players, posing security and economic challenges for countries that risk becoming dependent. Canada's response is to build strategic autonomy by working with like-minded allies to create alternatives to monopolized AI ecosystems while opening markets for Canadian companies.",
+      "The centrepiece is the Sovereign Technology Alliance, launched with Germany in February 2026. This initiative deepens collaboration among trusted democracies to share AI models, digital infrastructure, capital, and research. It aims to establish common safety and security approaches, shared evaluation standards, and interoperable procurement opportunities — creating a credible alternative to dominant technology ecosystems.",
+      "The strategy also champions open-source AI as a tool for resilience and choice. Open-source models are cheaper to deploy, easier to customize, and support greater transparency and competition. Canada will lead a global effort to sustain open-source AI development and create a shared library of tools aligned with Canadian needs.",
+      "Canada has already signed 20 new economic and defence partnerships, securing nearly $100 billion in foreign investment commitments. Eleven of these partnerships explicitly advance AI cooperation across four continents. Key partners include Germany (sovereign technology), the UK (AI safety and standards), France (AI governance under G7), the EU (strategic partnership), and a trilateral technology partnership with Australia and India covering AI, quantum, and trade."
+    ],
+    "keyIdeas": [
+      {
+        "term": "Sovereign Technology Alliance",
+        "def": "A multinational initiative launched with Germany in February 2026 to deepen collaboration among trusted democracies on shared AI models, infrastructure, safety standards, and procurement."
+      },
+      {
+        "term": "Strategic Autonomy",
+        "def": "The ability for Canada and its allies to build and govern AI capabilities independently of dominant technology ecosystems, ensuring resilience and choice."
+      },
+      {
+        "term": "Open-Source AI",
+        "def": "AI tools and models with transparent code that are cheaper to deploy, easier to customize, and support external evaluation — positioned as an alternative to closed proprietary systems."
+      },
+      {
+        "term": "Values-Based AI Governance",
+        "def": "Canada's approach to shaping global AI norms around democratic values, openness, and rules-based cooperation, leveraging its international standing through the G7 and bilateral partnerships."
+      },
+      {
+        "term": "Interoperable Procurement",
+        "def": "Aligned government purchasing processes across allied nations that create larger markets for compliant AI products and reduce barriers for Canadian companies exporting solutions."
+      }
+    ],
+    "examples": [
+      {
+        "title": "Why a coalition of democracies matters for AI",
+        "body": "A mid-sized European government needs an AI system for managing its national health records. Its only options are a handful of US and Chinese platforms, each subject to foreign legal regimes. If Canada and allies build interoperable sovereign AI infrastructure with shared standards, that government gains a third option: a democratically governed, privacy-respecting platform built by allied nations. Canadian companies like Cohere, which specializes in secure enterprise AI, can compete for these contracts because the standards and certification systems are already aligned."
+      },
+      {
+        "title": "Spotlight: Open-source AI for federal policy flexibility",
+        "body": "A federal department deploying AI for document analysis faces vendor lock-in with a proprietary platform. Switching providers would require rebuilding the entire system. If the department had adopted an open-source model, it could customize the tool for bilingual processing, deploy it on sovereign Canadian cloud infrastructure, and switch underlying components without starting from scratch. The strategy's push for open-source adoption in government reduces dependency, increases transparency, and supports Canadian sovereignty."
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Evaluate an international AI partnership",
+        "estimatedMinutes": 20,
+        "difficulty": "intermediate",
+        "steps": [
+          "Step 1: Choose one of Canada's AI partnership regions from the strategy (Europe, Indo-Pacific, or Middle East).",
+          "Step 2: Identify what Canada brings to the partnership (research talent, clean energy, safety expertise, critical minerals, etc.).",
+          "Step 3: Identify what the partner brings (market access, capital, manufacturing capacity, complementary technology).",
+          "Step 4: Assess the risks: What could go wrong in this partnership? How might geopolitical shifts affect it?",
+          "Step 5: Write a brief assessment of whether this partnership advances Canada's strategic autonomy or creates new dependencies."
+        ]
+      }
+    ],
+    "quiz": [
+      {
+        "q": "What is the Sovereign Technology Alliance?",
+        "opts": [
+          "A Canadian domestic alliance between tech companies and universities",
+          "A multinational initiative launched with Germany for shared AI models, infrastructure, and standards",
+          "A defence pact focused on AI-powered weapons systems",
+          "A trade agreement eliminating tariffs on AI hardware"
+        ],
+        "a": 1,
+        "why": "The Sovereign Technology Alliance was launched with Germany in February 2026 to deepen collaboration among trusted democracies on common AI models, shared digital infrastructure, capital access, joint research, and aligned safety and evaluation standards."
+      },
+      {
+        "q": "How many new economic and defence partnerships has Canada signed in the past year?",
+        "opts": [
+          "5",
+          "11",
+          "20",
+          "28"
+        ],
+        "a": 2,
+        "why": "Canada has signed 20 new economic and defence partnerships, securing nearly $100 billion in foreign investment commitments. Of these 20, 11 explicitly advance cooperation on artificial intelligence."
+      },
+      {
+        "q": "Why does the strategy champion open-source AI?",
+        "opts": [
+          "Because open-source AI is always more powerful than proprietary systems",
+          "Because it offers transparency, lower costs, customizability, and reduces vendor lock-in",
+          "Because Canada cannot afford to develop proprietary AI models",
+          "Because international law requires government AI to be open-source"
+        ],
+        "a": 1,
+        "why": "Open-source AI provides transparent tools that are cheaper to deploy, easier to fine-tune for specific needs, and support external evaluation and accountability. It reduces structural dependency on closed proprietary platforms."
+      },
+      {
+        "q": "Which countries are forming a trilateral technology partnership with Canada?",
+        "opts": [
+          "Germany and France",
+          "The UK and Japan",
+          "Australia and India",
+          "The UAE and Saudi Arabia"
+        ],
+        "a": 2,
+        "why": "Canada, Australia, and India are formalizing a trilateral technology and innovation partnership covering AI, quantum, trade missions, and private-sector matchmaking."
+      },
+      {
+        "q": "What did Hypertec announce at VivaTech 2025 in Paris?",
+        "opts": [
+          "A $1 billion Canadian data centre network",
+          "A $5 billion initiative to build one of Europe's largest sovereign AI infrastructure networks",
+          "A partnership with the French government on AI regulation",
+          "The acquisition of a French AI startup"
+        ],
+        "a": 1,
+        "why": "Montreal's Hypertec announced a $5 billion initiative to build one of Europe's largest sovereign AI infrastructure networks, with over 2 GW of data centre capacity and nearly 100,000 GPUs planned. Hypertec has since been designated as the first Canadian NVIDIA OEM Partner manufacturing systems in Canada."
+      }
+    ],
+    "teach": "Explain to a Canadian tech CEO who only sells domestically why the Sovereign Technology Alliance and international partnerships matter to their business. Show how aligned standards across allied nations could turn their product into an export opportunity.",
+    "exercise": {
+      "title": "Evaluate an international AI partnership",
+      "estimatedMinutes": 20,
+      "difficulty": "intermediate",
+      "steps": [
+        "Step 1: Choose one of Canada's AI partnership regions from the strategy (Europe, Indo-Pacific, or Middle East).",
+        "Step 2: Identify what Canada brings to the partnership (research talent, clean energy, safety expertise, critical minerals, etc.).",
+        "Step 3: Identify what the partner brings (market access, capital, manufacturing capacity, complementary technology).",
+        "Step 4: Assess the risks: What could go wrong in this partnership? How might geopolitical shifts affect it?",
+        "Step 5: Write a brief assessment of whether this partnership advances Canada's strategic autonomy or creates new dependencies."
+      ]
+    }
+  },
+  {
+    "id": "m7",
+    "num": "07",
+    "title": "Capstone: Putting It All Together",
+    "chapter": "Synthesis",
+    "minutes": 45,
+    "overview": [
+      "Canada's AI for All strategy is an interconnected system, not six independent pillars. Trust (Pillars 1 and 6) enables adoption. Opportunity (Pillars 2 and 3) ensures adoption delivers broad benefits. Sovereignty (Pillars 4 and 5) guarantees that the infrastructure behind adoption serves Canadian interests. Each pillar reinforces the others — weakening any one creates cascading vulnerabilities across the whole framework.",
+      "The strategy's ambitions are concrete and measurable: raise business adoption from 12% to 60% by 2034, create up to 250,000 new AI-related jobs by 2031, build a world-leading supercomputer, deliver $200 billion in GDP gains from productivity, and ensure all post-secondary students have access to trusted AI agents. These are not aspirational statements — they are targets against which the strategy can be evaluated.",
+      "Several tensions will shape implementation. The urgency of adoption versus the need for safety standards. The desire for sovereign infrastructure versus the cost and time of building it. The commitment to pro-worker AI versus the economic pressure to automate for efficiency. The aspiration to keep companies in Canada versus the gravitational pull of larger markets. How Canada navigates these tensions will determine whether AI for All delivers on its promise.",
+      "The strategy acknowledges that AI is moving faster than any plan can anticipate. It commits to reviewing and updating the plan as technology, society, and geopolitics evolve. The enduring principles — trust, opportunity, and sovereignty, with adoption as the central mechanism — provide a stable framework even as specific actions adapt. Canada's AI future depends on executing with the same ambition that the strategy articulates."
+    ],
+    "keyIdeas": [
+      {
+        "term": "Interconnected Pillars",
+        "def": "The six pillars are not independent programs but a system: trust enables adoption, opportunity ensures adoption creates broad benefits, and sovereignty guarantees Canadian control over the underlying infrastructure."
+      },
+      {
+        "term": "Adoption as the Central Mechanism",
+        "def": "The strategy's core logic: benefits come not from AI technology itself but from widespread, confident adoption by citizens, businesses, and institutions."
+      },
+      {
+        "term": "60% by 2034 Target",
+        "def": "The headline adoption goal: increasing business AI use from 12% today to 60% within eight years, a fivefold increase requiring sustained investment across all pillars."
+      },
+      {
+        "term": "Dynamic Strategy",
+        "def": "The commitment to regularly review and update the plan as AI technology and the global landscape evolve, while keeping core principles of trust, opportunity, and sovereignty stable."
+      },
+      {
+        "term": "Strategic Tensions",
+        "def": "The inherent trade-offs the strategy must navigate: speed vs. safety, sovereignty vs. cost, pro-worker vs. automation pressure, and domestic scaling vs. global market gravity."
+      },
+      {
+        "term": "$200 Billion GDP Target",
+        "def": "The projected economic impact: a 3% GDP increase representing nearly $200 billion in gains from labour productivity driven by AI commercialization and application."
+      }
+    ],
+    "examples": [
+      {
+        "title": "How the pillars connect: an end-to-end scenario",
+        "body": "A Canadian AI company develops a diagnostic tool that can detect early-stage cancer from medical imaging. Pillar 4 provides the sovereign compute and VITAL health data to train the model. Pillar 1 ensures the tool meets safety and privacy standards through the AI Safety Institute and Trusted AI Certification. Pillar 2 trains radiologists to use the tool effectively. Pillar 3's health mission provides $200 million in adoption funding and positions government hospitals as early customers. Pillar 5's Growth Fund provides capital to scale. Pillar 6's Sovereign Technology Alliance opens allied markets. The tool saves Canadian lives, creates Canadian jobs, and generates export revenue — but only because all six pillars worked together."
+      },
+      {
+        "title": "Spotlight: Navigating the speed vs. safety tension in government",
+        "body": "A federal department wants to deploy AI to reduce service backlogs immediately. The safety-first approach from Pillar 1 requires evaluation, certification, and human-in-the-loop oversight — which takes time. The tension is real: every month of delay means more Canadians waiting for services. The strategy resolves this through the Office of Digital Transformation (rapid procurement), the Trusted AI Certification (pre-vetted solutions), and the Innovation Fellows Program (internal expertise to evaluate tools quickly). Speed and safety are not opposed — the institutional investments make responsible deployment faster."
+      }
+    ],
+    "exercises": [
+      {
+        "title": "Build your own AI for All implementation roadmap",
+        "estimatedMinutes": 30,
+        "difficulty": "advanced",
+        "steps": [
+          "Step 1: Choose an organization (your employer, a government department, a sector association).",
+          "Step 2: Assess where the organization sits on each pillar: What protections are in place? How AI-literate is the workforce? What adoption has occurred? What infrastructure is used? Is the organization growing Canadian champions? What international connections exist?",
+          "Step 3: Identify the weakest pillar — the one most likely to constrain progress.",
+          "Step 4: Propose three specific actions the organization should take in the next 12 months, mapping each to a strategy initiative.",
+          "Step 5: Define one measurable target for each action and describe how you would track progress.",
+          "Step 6: Write a one-page executive summary connecting your actions to the strategy's overarching goals of trust, opportunity, and sovereignty."
+        ]
+      },
+      {
+        "title": "Stress-test the strategy against a real scenario",
+        "estimatedMinutes": 20,
+        "difficulty": "advanced",
+        "steps": [
+          "Step 1: Choose a plausible disruption: a major geopolitical event affecting chip supply, a breakthrough in AI that makes current models obsolete, a major AI-related incident that erodes public trust, or a competitor nation launching an aggressive AI talent recruitment campaign.",
+          "Step 2: Trace the impact through each of the six pillars. Which ones are most affected?",
+          "Step 3: Assess whether the strategy's current actions provide adequate resilience against your chosen disruption.",
+          "Step 4: Propose two additional actions the strategy should include to improve resilience.",
+          "Step 5: Reflect on whether the strategy's commitment to 'dynamism' is sufficient to handle rapid change."
+        ]
+      },
+      {
+        "title": "Write a briefing note on the strategy for a decision-maker",
+        "estimatedMinutes": 25,
+        "difficulty": "advanced",
+        "steps": [
+          "Step 1: Choose your audience: a Cabinet minister, a CEO, a university president, or a union leader.",
+          "Step 2: Identify the three aspects of the strategy most relevant to their role and priorities.",
+          "Step 3: For each aspect, write one paragraph covering: what the strategy proposes, why it matters for their organization, and what action they should take.",
+          "Step 4: Add a 'risks and considerations' section identifying potential implementation challenges.",
+          "Step 5: Close with a specific recommendation for their next step."
+        ]
+      }
+    ],
+    "quiz": [
+      {
+        "q": "What is the relationship between the six pillars?",
+        "opts": [
+          "They are independent programs that can be implemented in any order",
+          "They form an interconnected system where trust enables adoption, opportunity delivers benefits, and sovereignty ensures Canadian control",
+          "They are ranked in order of importance, with Pillar 1 being the highest priority",
+          "They are alternatives — Canada will implement whichever pillars prove most feasible"
+        ],
+        "a": 1,
+        "why": "The six pillars form an interconnected system organized around three overarching goals: trust (Pillars 1 and 6), opportunity (Pillars 2 and 3), and sovereignty (Pillars 4 and 5). Weakening any one creates cascading effects across the framework."
+      },
+      {
+        "q": "What is the strategy's projected GDP impact from AI-driven productivity?",
+        "opts": [
+          "A 1% increase worth $50 billion",
+          "A 2% increase worth $100 billion",
+          "A 3% increase worth nearly $200 billion",
+          "A 5% increase worth $350 billion"
+        ],
+        "a": 2,
+        "why": "The strategy projects a 3% increase in GDP representing nearly $200 billion in gains from labour productivity, including through the commercialization and application of AI in key sectors."
+      },
+      {
+        "q": "How many new jobs does the strategy aim to create through AI adoption by 2031?",
+        "opts": [
+          "50,000",
+          "90,000",
+          "150,000",
+          "250,000"
+        ],
+        "a": 3,
+        "why": "The strategy projects up to 250,000 new jobs through the broader adoption of AI by 2031. The 90,000 figure refers specifically to AI-related job and work placement opportunities for young Canadians."
+      },
+      {
+        "q": "Which strategic tension is NOT explicitly addressed in the strategy?",
+        "opts": [
+          "Speed of adoption vs. need for safety standards",
+          "Sovereign infrastructure vs. cost of building it",
+          "Pro-worker AI vs. economic pressure to automate",
+          "French language AI vs. English language AI priority"
+        ],
+        "a": 3,
+        "why": "The strategy commits to supporting both official languages equally, not prioritizing one over the other. The first three tensions are all explicitly navigated in the strategy. The French language is addressed as a cultural inclusion priority, not as a competitive tension with English."
+      },
+      {
+        "q": "What does the strategy mean by 'dynamic' implementation?",
+        "opts": [
+          "Implementing all actions simultaneously rather than sequentially",
+          "Regularly reviewing and updating the plan as technology and the world evolve",
+          "Delegating implementation entirely to provinces and territories",
+          "Changing the strategy's core principles based on public opinion polls"
+        ],
+        "a": 1,
+        "why": "The strategy acknowledges AI is moving faster than any plan can anticipate and commits to reviewing and updating it. However, the core principles of trust, opportunity, and sovereignty remain stable — it is the specific actions that adapt."
+      },
+      {
+        "q": "According to the strategy, what is the central mechanism through which AI delivers benefits to Canadians?",
+        "opts": [
+          "Government regulation of AI companies",
+          "Research breakthroughs at national AI institutes",
+          "Widespread, confident adoption by citizens, businesses, and institutions",
+          "Foreign investment in Canadian AI infrastructure"
+        ],
+        "a": 2,
+        "why": "The strategy's core argument is that benefits come from adoption, not from technology itself. Trust makes adoption possible, opportunity ensures adoption creates benefits, and sovereignty ensures the infrastructure serves Canadian interests. Without adoption, none of the other investments deliver their intended impact."
+      },
+      {
+        "q": "If you had to identify the single most important metric for evaluating the strategy's success, which would best capture its overall ambition?",
+        "opts": [
+          "Number of AI research papers published by Canadian institutions",
+          "Total venture capital invested in Canadian AI companies",
+          "Business AI adoption rate reaching 60% by 2034",
+          "Number of sovereign data centres operational in Canada"
+        ],
+        "a": 2,
+        "why": "The 60% adoption target is the most comprehensive success metric because achieving it requires progress across all six pillars: trust to enable adoption, literacy to support it, infrastructure to power it, companies to serve it, and partnerships to expand it. It is the metric that best captures the strategy's overall thesis that adoption is the central mechanism for benefit."
+      },
+      {
+        "q": "What is the strategy's approach to the fact that AI is evolving faster than policy can keep up?",
+        "opts": [
+          "Pause all AI deployment until regulations are finalized",
+          "Build around enduring principles (trust, opportunity, sovereignty) while adapting specific actions",
+          "Delegate all AI governance to the private sector",
+          "Copy whatever approach the leading AI nation adopts"
+        ],
+        "a": 1,
+        "why": "The strategy is deliberately built around stable principles — trust, opportunity, sovereignty, and the central importance of adoption — while committing to regularly update specific actions as technology and the global landscape evolve. This provides a stable framework without pretending to predict the future."
+      }
+    ],
+    "teach": "You have two minutes to brief a new Cabinet minister on the AI for All strategy. Cover: the core problem (adoption gap), the organizing framework (trust-opportunity-sovereignty), the three most important numbers they should remember, and the one thing that could go wrong if execution falters. Make it conversational, not bureaucratic.",
+    "exercise": {
+      "title": "Build your own AI for All implementation roadmap",
+      "estimatedMinutes": 30,
+      "difficulty": "advanced",
+      "steps": [
+        "Step 1: Choose an organization (your employer, a government department, a sector association).",
+        "Step 2: Assess where the organization sits on each pillar: What protections are in place? How AI-literate is the workforce? What adoption has occurred? What infrastructure is used? Is the organization growing Canadian champions? What international connections exist?",
+        "Step 3: Identify the weakest pillar — the one most likely to constrain progress.",
+        "Step 4: Propose three specific actions the organization should take in the next 12 months, mapping each to a strategy initiative.",
+        "Step 5: Define one measurable target for each action and describe how you would track progress.",
+        "Step 6: Write a one-page executive summary connecting your actions to the strategy's overarching goals of trust, opportunity, and sovereignty."
+      ]
+    }
+  }
+];
+
+/* ============================================================
+   COURSE ENGINE — generic interactive course renderer
+   Reads title, subtitle, source, audience, hooks, and all
+   module content from the COURSE/MODULES_2/MODULES_3 objects.
+   Class names match the scaffold stylesheet.
+   ============================================================ */
+(function () {
+  "use strict";
+
+  var MODULES = COURSE.modules
+    .concat(typeof MODULES_2 !== "undefined" ? MODULES_2 : [])
+    .concat(typeof MODULES_3 !== "undefined" ? MODULES_3 : []);
+  var TOTAL = MODULES.length;
+  var META = COURSE;             // title, subtitle, source, audience, hooks, eyebrow
+
+  /* ---- Progress + quiz scores ---- */
+  var STORE_KEY = "course_progress_" + (META.id || "v1");
+  var SCORES_KEY = "course_scores_" + (META.id || "v1");
+  var done = {};
+  var quizScores = {};
+  function loadProgress() {
+    try { var raw = localStorage.getItem(STORE_KEY); if (raw) done = JSON.parse(raw) || {}; } catch (e) { done = {}; }
+    try { var sr = localStorage.getItem(SCORES_KEY); if (sr) quizScores = JSON.parse(sr) || {}; } catch (e) { quizScores = {}; }
+  }
+  function saveProgress() {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(done)); } catch (e) {}
+    try { localStorage.setItem(SCORES_KEY, JSON.stringify(quizScores)); } catch (e) {}
+  }
+  window.__quizScores = quizScores;
+  window.__courseMeta = META;
+  window.__courseModules = null;
+
+  /* ---- helpers ---- */
+  function el(id) { return document.getElementById(id); }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];
+    });
+  }
+  function moduleById(id) { for (var i = 0; i < MODULES.length; i++) if (MODULES[i].id === id) return MODULES[i]; return null; }
+  function indexOfId(id) { for (var i = 0; i < MODULES.length; i++) if (MODULES[i].id === id) return i; return -1; }
+
+  function updateProgress() {
+    var n = 0; for (var i = 0; i < MODULES.length; i++) if (done[MODULES[i].id]) n++;
+    var pct = TOTAL ? Math.round((n / TOTAL) * 100) : 0;
+    el("progFill").style.width = pct + "%";
+    el("progPct").textContent = pct + "%";
+  }
+
+  /* ---- sidebar nav ---- */
+  function buildNav() {
+    var nav = el("nav");
+    var html = '<button class="nav-item" data-route="home">' +
+      '<span class="nav-num">—</span><span class="nav-title">Home &amp; overview</span></button>';
+    html += '<div class="nav-section">' + esc(META.navLabel || "Modules") + '</div>';
+    for (var i = 0; i < MODULES.length; i++) {
+      var m = MODULES[i];
+      html += '<button class="nav-item" data-route="' + m.id + '">' +
+        '<span class="nav-num">' + esc(m.num) + '</span>' +
+        '<span class="nav-title">' + esc(m.title) + '</span>' +
+        '<span class="nav-check" data-check="' + m.id + '"></span></button>';
+    }
+    nav.innerHTML = html;
+    nav.addEventListener("click", function (e) {
+      var b = e.target.closest(".nav-item");
+      if (b) { location.hash = "#/" + b.getAttribute("data-route"); closeDrawer(); }
+    });
+    refreshNavChecks();
+  }
+  function refreshNavChecks() {
+    document.querySelectorAll("#nav .nav-check").forEach(function (c) {
+      c.classList.toggle("done", !!done[c.getAttribute("data-check")]);
+    });
+  }
+  function setActiveNav(route) {
+    document.querySelectorAll("#nav .nav-item").forEach(function (b) {
+      b.classList.toggle("active", b.getAttribute("data-route") === route);
+    });
+  }
+
+  /* ---- Update sidebar brand from COURSE metadata ---- */
+  (function () {
+    var brand = document.querySelector("#sidebar .brand");
+    if (brand && META.title) {
+      var ey = brand.querySelector(".eyebrow");
+      var h1 = brand.querySelector("h1");
+      var sub = brand.querySelector(".sub");
+      if (ey && META.eyebrow) ey.textContent = META.eyebrow;
+      if (h1) h1.textContent = META.title;
+      if (sub && META.subtitle) sub.textContent = META.subtitle;
+    }
+  })();
+
+  /* ---- signature diagram SVG (optional — read from META.diagramSvg or use generic) ---- */
+  function heroDiagram() {
+    if (META.diagramSvg) return META.diagramSvg;
+    // generic feedback-loop diagram
+    function box(x, y, label) {
+      return '<rect x="'+x+'" y="'+y+'" width="104" height="42" rx="6" fill="none" stroke="var(--signal)" stroke-width="1.4" opacity="0.9"/>' +
+        '<text x="'+(x+52)+'" y="'+(y+26)+'" text-anchor="middle" font-family="JetBrains Mono,monospace" font-size="12" fill="var(--paper)" letter-spacing="1">'+label+'</text>';
+    }
+    return '<svg viewBox="0 0 440 230" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" aria-hidden="true">' +
+      '<defs><marker id="aw" markerWidth="9" markerHeight="9" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--phosphor)"/></marker></defs>' +
+      box(28,26,"READ") + box(268,26,"THINK") + box(268,150,"APPLY") + box(28,150,"LEARN") +
+      '<path d="M134 47 L268 47" fill="none" stroke="var(--phosphor)" stroke-width="1.4" marker-end="url(#aw)"/>' +
+      '<path d="M320 70 L320 150" fill="none" stroke="var(--phosphor)" stroke-width="1.4" marker-end="url(#aw)"/>' +
+      '<path d="M268 171 L134 171" fill="none" stroke="var(--phosphor)" stroke-width="1.4" marker-end="url(#aw)"/>' +
+      '<path d="M80 150 L80 70" fill="none" stroke="var(--phosphor)" stroke-width="1.4" marker-end="url(#aw)"/>' +
+      '<text x="180" y="40" font-family="JetBrains Mono,monospace" font-size="10" fill="var(--signal)">absorb</text>' +
+      '<text x="160" y="189" font-family="JetBrains Mono,monospace" font-size="10" fill="var(--signal)">feedback</text>' +
+      '</svg>';
+  }
+
+  /* ---- HOME ---- */
+  function renderHome() {
+    setActiveNav("home");
+    el("crumb").innerHTML = "Home";
+    el("crumbRight").textContent = TOTAL + " modules";
+
+    var totalMin = 0; for (var i = 0; i < MODULES.length; i++) totalMin += (MODULES[i].minutes || 0);
+    var hrs = (totalMin / 60); hrs = hrs < 1 ? "< 1" : Math.round(hrs);
+
+    // Hooks (from META.hooks array or empty)
+    var hooks = META.hooks || [];
+    var hooksHtml = "";
+    for (var h = 0; h < hooks.length; h++) {
+      hooksHtml += '<div class="hook"><div class="h-num">' + esc(hooks[h].label || ("Idea 0" + (h+1))) + '</div>' +
+        '<h3>' + esc(hooks[h].title) + '</h3><p>' + esc(hooks[h].body) + '</p></div>';
+    }
+
+    var cards = "";
+    for (var j = 0; j < MODULES.length; j++) {
+      var m = MODULES[j];
+      cards += '<button class="mod-card' + (done[m.id] ? " done" : "") + '" data-go="' + m.id + '">' +
+        '<div class="mc-top"><span class="mc-num">' + esc(m.num) + '</span>' +
+        '<span class="mc-min">' + esc(m.minutes) + ' min</span></div>' +
+        '<h3>' + esc(m.title) + '</h3>' +
+        '<div class="mc-ch">' + esc(m.chapter) + '</div>' +
+        '<div class="mc-done">✓ done</div></button>';
+    }
+
+    var lede = META.lede || ("This course covers the full content in plain language, with key ideas, " +
+      "real-world examples, hands-on exercises, and quizzes with explained answers.");
+
+    el("view").innerHTML =
+      '<section class="hero">' +
+        '<div class="loop-bg">' + heroDiagram() + '</div>' +
+        '<div class="hero-inner">' +
+          '<div class="eyebrow">' + esc(META.eyebrow || "A complete, self-paced course") + '</div>' +
+          '<h1>' + esc(META.title) + '<span class="light">' + esc(META.subtitle || "") + '</span></h1>' +
+          '<p class="lede">' + esc(lede) + '</p>' +
+          '<div class="byline">' + TOTAL + ' modules · ~' + hrs + ' hours · quizzes &amp; exercises in every module</div>' +
+          '<div class="hero-cta">' +
+            '<button class="btn btn-primary" data-go="' + MODULES[0].id + '">Begin →</button>' +
+            (MODULES.length > 1 ? '<button class="btn btn-ghost" data-go="' + MODULES[1].id + '">Jump to ' + esc(MODULES[1].title) + '</button>' : '') +
+          '</div>' +
+        '</div>' +
+      '</section>' +
+      '<div class="home-body">' +
+        (hooksHtml ? '<div class="section-eyebrow">' + esc(META.hooksLabel || "Key ideas the whole course turns on") + '</div>' +
+          '<div class="three-hooks">' + hooksHtml + '</div>' : '') +
+        '<div class="section-eyebrow" style="margin-top:54px">Course modules</div>' +
+        '<h2>Work them in order, or jump to any section</h2>' +
+        '<p>Each module gives you an overview and summary, the key ideas to retain, worked examples, a hands-on exercise, and a quiz whose answers are all explained. Finish each one with a teach-back prompt — your rehearsal for explaining the idea to someone else.</p>' +
+        '<div class="module-grid">' + cards + '</div>' +
+        '<p style="margin-top:48px;font-family:var(--mono);font-size:12px;color:var(--txt-soft);max-width:680px">' +
+          esc(META.source || "") + '. All explanatory text in this course is original educational material; no passages from the source are reproduced.</p>' +
+      '</div>';
+
+    el("view").querySelectorAll("[data-go]").forEach(function (b) {
+      b.addEventListener("click", function () { location.hash = "#/" + b.getAttribute("data-go"); });
+    });
+    window.scrollTo(0, 0);
+  }
+
+  /* ---- MODULE ---- */
+  function renderModule(id) {
+    var m = moduleById(id);
+    if (!m) { location.hash = "#/home"; return; }
+    setActiveNav(id);
+    el("crumb").innerHTML = '<b>Module ' + esc(m.num) + '</b>';
+    el("crumbRight").textContent = m.chapter;
+    var idx = indexOfId(id);
+
+    var ov = ""; for (var i = 0; i < m.overview.length; i++) ov += "<p>" + esc(m.overview[i]) + "</p>";
+
+    var ki = "";
+    for (var k = 0; k < m.keyIdeas.length; k++) {
+      ki += '<div class="ki"><div class="ki-term"><span class="dot"></span>' + esc(m.keyIdeas[k].term) + '</div>' +
+        '<div class="ki-def">' + esc(m.keyIdeas[k].def) + '</div></div>';
+    }
+
+    var ex = "";
+    for (var e = 0; e < m.examples.length; e++) {
+      var isSpecial = /spotlight/i.test(m.examples[e].title);
+      var label = isSpecial ? m.examples[e].title.match(/^[^:]+/)[0] : "Real-world example";
+      var title = m.examples[e].title.replace(/^[^:]*:\s*/i, "");
+      if (!isSpecial) title = m.examples[e].title;
+      ex += '<div class="ex' + (isSpecial ? " gis" : "") + '">' +
+        '<div class="ex-tag">' + esc(label) + '</div>' +
+        '<h4>' + esc(title) + '</h4><p>' + esc(m.examples[e].body) + '</p></div>';
+    }
+
+    // Exercises (supports array or legacy single object)
+    var exArr = m.exercises || (m.exercise ? [m.exercise] : []);
+    var exercisesHtml = "";
+    for (var ei = 0; ei < exArr.length; ei++) {
+      var exc = exArr[ei];
+      var esteps = ""; for (var s = 0; s < exc.steps.length; s++) esteps += "<li>" + esc(exc.steps[s]) + "</li>";
+      var badges = "";
+      if (exc.estimatedMinutes) badges += '<span class="ex-badge time">~' + exc.estimatedMinutes + ' min</span>';
+      if (exc.difficulty) badges += '<span class="ex-badge diff diff-' + esc(exc.difficulty) + '">' + esc(exc.difficulty) + '</span>';
+      exercisesHtml += '<div class="exercise"><h4>' + esc(exc.title) + '</h4>' +
+        (badges ? '<div class="ex-badges">' + badges + '</div>' : '') +
+        '<div class="ex-sub">Work through each step</div>' +
+        '<ol>' + esteps + '</ol></div>';
+      if (ei < exArr.length - 1) exercisesHtml += '<div style="height:16px"></div>';
+    }
+
+    var quiz = "";
+    for (var q = 0; q < m.quiz.length; q++) {
+      var item = m.quiz[q], opts = "";
+      for (var o = 0; o < item.opts.length; o++) {
+        opts += '<button class="opt" data-q="' + q + '" data-o="' + o + '">' +
+          '<span class="opt-key">' + String.fromCharCode(65 + o) + '</span>' +
+          '<span>' + esc(item.opts[o]) + '</span></button>';
+      }
+      quiz += '<div class="q" data-qi="' + q + '">' +
+        '<div class="q-head"><span class="q-n">Q' + (q + 1) + '</span><span class="q-text">' + esc(item.q) + '</span></div>' +
+        '<div class="opts">' + opts + '</div>' +
+        '<div class="explain" data-explain="' + q + '"><div class="e-label">Why this answer</div><p>' + esc(item.why) + '</p></div>' +
+        '</div>';
+    }
+
+    var prev = idx > 0 ? MODULES[idx - 1] : null;
+    var next = idx < MODULES.length - 1 ? MODULES[idx + 1] : null;
+    var footer = '<div class="mod-footer">';
+    footer += prev
+      ? '<button class="fnav" data-go="' + prev.id + '"><div class="fn-dir">← Previous</div><div class="fn-title">' + esc(prev.title) + '</div></button>'
+      : '<span class="fnav disabled"><div class="fn-dir">Start of course</div><div class="fn-title">' + esc(m.title) + '</div></span>';
+    footer += next
+      ? '<button class="fnav next" data-go="' + next.id + '"><div class="fn-dir">Next →</div><div class="fn-title">' + esc(next.title) + '</div></button>'
+      : '<button class="fnav next" data-go="home"><div class="fn-dir">Finish →</div><div class="fn-title">Back to overview</div></button>';
+    footer += '</div>';
+
+    el("view").innerHTML =
+      '<div class="content fade">' +
+        '<div class="mod-head">' +
+          '<div class="mh-eyebrow"><span class="chip">MODULE ' + esc(m.num) + '</span><span>' + esc(m.chapter) + '</span><span>' + esc(m.minutes) + ' min</span></div>' +
+          '<h1>' + esc(m.title) + '</h1>' +
+        '</div>' +
+        '<div class="mod-meta">Overview, key ideas, worked examples, a hands-on exercise, and an explained quiz. Mark the module complete when you can pass the quiz and answer the teach-back prompt.</div>' +
+        '<section class="block"><div class="block-label">Overview &amp; summary</div><div class="prose">' + ov + '</div></section>' +
+        '<section class="block"><div class="block-label">Key ideas to retain</div><div class="ki-list">' + ki + '</div></section>' +
+        '<section class="block"><div class="block-label">Real-world examples</div>' + ex + '</section>' +
+        '<section class="block"><div class="block-label">Hands-on exercise' + (exArr.length > 1 ? "s" : "") + '</div>' +
+          exercisesHtml + '</section>' +
+        '<section class="block"><div class="block-label">Check your understanding</div>' +
+          '<div class="quiz-intro"><span style="font-size:15px;color:var(--txt)">Tap an answer to lock it in and reveal the explanation.</span>' +
+          '<span class="quiz-score" id="quizScore">Answered <b>0</b> / ' + m.quiz.length + '</span></div>' +
+          quiz +
+          '<div class="quiz-result" id="quizResult"><div class="big" id="qrBig"></div><div class="lbl">your score</div><div class="msg" id="qrMsg"></div></div>' +
+        '</section>' +
+        '<section class="block"><div class="block-label">Teach it back</div>' +
+          '<div class="teach"><svg class="t-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3l9 4.5-9 4.5-9-4.5L12 3z"/><path d="M21 7.5V13"/><path d="M6 9.5V14c0 1.5 3 3 6 3s6-1.5 6-3V9.5"/></svg>' +
+          '<div class="t-body"><div class="t-label">Teach-back prompt</div><p>' + esc(m.teach) + '</p></div></div></section>' +
+        '<button class="mark-done' + (done[id] ? " done" : "") + '" id="markDone">' +
+          (done[id] ? "✓ Completed — tap to unmark" : "Mark this module complete") + '</button>' +
+        footer +
+      '</div>';
+
+    wireQuiz(m);
+    wireMarkDone(id);
+    el("view").querySelectorAll(".fnav[data-go]").forEach(function (b) {
+      b.addEventListener("click", function () { location.hash = "#/" + b.getAttribute("data-go"); });
+    });
+    window.scrollTo(0, 0);
+  }
+
+  /* ---- quiz interaction ---- */
+  function wireQuiz(m) {
+    var answered = {};
+    var view = el("view");
+    view.querySelectorAll(".opt").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var qi = +btn.getAttribute("data-q"), oi = +btn.getAttribute("data-o");
+        if (answered.hasOwnProperty(qi)) return;
+        answered[qi] = oi;
+        var correct = m.quiz[qi].a;
+        var qBlock = view.querySelector('.q[data-qi="' + qi + '"]');
+        qBlock.querySelectorAll(".opt").forEach(function (b) {
+          var bo = +b.getAttribute("data-o");
+          b.classList.add("locked");
+          if (bo === correct) b.classList.add("correct");
+          if (bo === oi && oi !== correct) b.classList.add("wrong");
+        });
+        var exp = view.querySelector('.explain[data-explain="' + qi + '"]');
+        if (exp) exp.classList.add("show");
+        var count = Object.keys(answered).length;
+        var sc = el("quizScore"); if (sc) sc.innerHTML = "Answered <b>" + count + "</b> / " + m.quiz.length;
+        if (count === m.quiz.length) showResult();
+      });
+    });
+    function showResult() {
+      var right = 0;
+      for (var qi in answered) if (answered[qi] === m.quiz[qi].a) right++;
+      var pct = Math.round((right / m.quiz.length) * 100);
+      // Save score for certificate
+      quizScores[m.id] = { right: right, total: m.quiz.length, pct: pct };
+      window.__quizScores = quizScores;
+      saveProgress();
+      var msg = pct === 100 ? "Perfect — you have this cold. Move on with confidence." :
+                pct >= 80 ? "Strong. Re-read the one you missed, then continue." :
+                pct >= 60 ? "A solid start. Revisit the key ideas above before the next module." :
+                "Worth another pass: re-read the overview and key ideas, then try again.";
+      el("qrBig").textContent = right + " / " + m.quiz.length;
+      el("qrMsg").textContent = msg;
+      var box = el("quizResult"); box.classList.add("show");
+      box.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+
+  /* ---- mark done ---- */
+  function wireMarkDone(id) {
+    var btn = el("markDone"); if (!btn) return;
+    btn.addEventListener("click", function () {
+      done[id] = !done[id]; saveProgress();
+      btn.textContent = done[id] ? "✓ Completed — tap to unmark" : "Mark this module complete";
+      btn.classList.toggle("done", !!done[id]);
+      updateProgress(); refreshNavChecks();
+    });
+  }
+
+  /* ---- mobile drawer ---- */
+  function openDrawer() { el("sidebar").classList.add("open"); el("scrim").classList.add("show"); }
+  function closeDrawer() { el("sidebar").classList.remove("open"); el("scrim").classList.remove("show"); }
+
+  /* ---- router ---- */
+  function route() {
+    var hash = location.hash.replace(/^#\/?/, "") || "home";
+    if (hash === "home") renderHome();
+    else if (moduleById(hash)) renderModule(hash);
+    else renderHome();
+    updateProgress(); refreshNavChecks();
+  }
+
+  /* ---- init ---- */
+  function init() {
+    loadProgress(); buildNav(); updateProgress();
+    window.__courseModules = MODULES;
+    el("menuBtn").addEventListener("click", openDrawer);
+    el("scrim").addEventListener("click", closeDrawer);
+    el("resetBtn").addEventListener("click", function () {
+      if (confirm("Reset all course progress?")) { done = {}; saveProgress(); route(); }
+    });
+    window.addEventListener("hashchange", route);
+    route();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
+/* ============================================================
+   ENHANCEMENTS: Themes, Help, Background Music, TTS
+   Runs after the main course IIFE; uses its own IIFE.
+   ============================================================ */
+(function () {
+  "use strict";
+  var $ = function (id) { return document.getElementById(id); };
+  var SETTINGS_KEY = "course_settings_" + (typeof COURSE !== "undefined" && COURSE.id ? COURSE.id : "v1");
+
+  function loadSettings() {
+    try { return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {}; }
+    catch (e) { return {}; }
+  }
+  function saveSettings(s) {
+    try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); } catch (e) {}
+  }
+  var S = loadSettings();
+
+  /* ======= THEMES ======= */
+  function applyTheme(t) {
+    if (t) document.documentElement.setAttribute("data-theme", t);
+    else document.documentElement.removeAttribute("data-theme");
+    document.querySelectorAll("#themeGrid .theme-swatch").forEach(function (b) {
+      b.classList.toggle("active", b.getAttribute("data-theme-val") === (t || ""));
+    });
+    S.theme = t || ""; saveSettings(S);
+  }
+  applyTheme(S.theme || "");
+
+  $("themeGrid").addEventListener("click", function (e) {
+    var sw = e.target.closest(".theme-swatch");
+    if (sw) applyTheme(sw.getAttribute("data-theme-val"));
+  });
+
+  /* ======= SETTINGS PANEL ======= */
+  function openSettings() { $("settingsOverlay").classList.add("open"); populateVoices(); }
+  function closeSettings() { $("settingsOverlay").classList.remove("open"); }
+  $("settingsClose").addEventListener("click", closeSettings);
+  $("settingsOverlay").addEventListener("click", function (e) {
+    if (e.target === $("settingsOverlay")) closeSettings();
+  });
+
+  /* ======= HELP MODAL ======= */
+  function openHelp() { $("helpOverlay").classList.add("open"); }
+  function closeHelp() { $("helpOverlay").classList.remove("open"); }
+  $("helpClose").addEventListener("click", closeHelp);
+  $("helpOverlay").addEventListener("click", function (e) {
+    if (e.target === $("helpOverlay")) closeHelp();
+  });
+
+  /* Escape key closes any panel */
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { closeSettings(); closeHelp(); }
+  });
+
+  /* Wire topbar buttons (injected by build) */
+  var settBtn = $("settingsBtn");
+  var helpBtn = $("helpBtn");
+  if (settBtn) settBtn.addEventListener("click", openSettings);
+  if (helpBtn) helpBtn.addEventListener("click", openHelp);
+
+  /* ======= DYNAMIC HELP CONTENT ======= */
+  (function populateHelp() {
+    var el = $("helpCourseStructure");
+    if (!el || typeof COURSE === "undefined") return;
+    var allMods = COURSE.modules
+      .concat(typeof MODULES_2 !== "undefined" ? MODULES_2 : [])
+      .concat(typeof MODULES_3 !== "undefined" ? MODULES_3 : []);
+    var n = allMods.length;
+    var title = COURSE.title || "the source material";
+    var txt = "This course has " + n + " module" + (n !== 1 ? "s" : "") +
+      " covering the key topics in " + title + ". " +
+      "Every module includes an overview and summary, key ideas to retain, " +
+      "two worked examples, a hands-on exercise, a five-question quiz with " +
+      "explained answers, and a teach-back prompt. " +
+      "Work them in order the first time; jump freely after that.";
+    el.textContent = txt;
+  })();
+
+  /* ======= TEXT-TO-SPEECH ======= */
+  var synth = window.speechSynthesis || null;
+  var ttsVoices = [];
+  var ttsUtterance = null;
+  var ttsCurrentText = "";
+  var ttsCurrentLabel = "";
+  var ttsSpeaking = false;
+  var ttsPaused = false;
+
+  function populateVoices() {
+    if (!synth) return;
+    var voices = synth.getVoices();
+    if (voices.length === 0) return; // may fire later
+    ttsVoices = voices;
+    var sel = $("voiceSelect");
+    var saved = S.ttsVoice || "";
+    sel.innerHTML = "";
+    voices.forEach(function (v, i) {
+      var opt = document.createElement("option");
+      opt.value = i;
+      opt.textContent = v.name + " (" + v.lang + ")";
+      if (v.name === saved) opt.selected = true;
+      sel.appendChild(opt);
+    });
+  }
+  if (synth) {
+    synth.onvoiceschanged = populateVoices;
+    populateVoices();
+  }
+
+  $("voiceSelect").addEventListener("change", function () {
+    var v = ttsVoices[+this.value];
+    if (v) { S.ttsVoice = v.name; saveSettings(S); }
+  });
+  $("ttsRate").addEventListener("input", function () {
+    S.ttsRate = +this.value; saveSettings(S);
+    $("ttsRateVal").textContent = this.value + "×";
+  });
+  $("ttsPitch").addEventListener("input", function () {
+    S.ttsPitch = +this.value; saveSettings(S);
+    $("ttsPitchVal").textContent = this.value;
+  });
+  // Restore saved values
+  if (S.ttsRate) { $("ttsRate").value = S.ttsRate; $("ttsRateVal").textContent = S.ttsRate + "×"; }
+  if (S.ttsPitch) { $("ttsPitch").value = S.ttsPitch; $("ttsPitchVal").textContent = S.ttsPitch; }
+
+  function ttsSpeak(text, label) {
+    if (!synth) return alert("Your browser does not support text-to-speech.");
+    ttsStop();
+    ttsCurrentText = text;
+    ttsCurrentLabel = label || "Reading…";
+
+    ttsUtterance = new SpeechSynthesisUtterance(text);
+    var voiceIdx = +($("voiceSelect").value || 0);
+    if (ttsVoices[voiceIdx]) ttsUtterance.voice = ttsVoices[voiceIdx];
+    ttsUtterance.rate = S.ttsRate || 1.0;
+    ttsUtterance.pitch = S.ttsPitch || 1.0;
+
+    ttsUtterance.onstart = function () { ttsSpeaking = true; ttsPaused = false; ttsUIUpdate(); };
+    ttsUtterance.onend = function () { ttsSpeaking = false; ttsPaused = false; ttsUIUpdate(); };
+    ttsUtterance.onerror = function () { ttsSpeaking = false; ttsUIUpdate(); };
+    ttsUtterance.onpause = function () { ttsPaused = true; ttsUIUpdate(); };
+    ttsUtterance.onresume = function () { ttsPaused = false; ttsUIUpdate(); };
+
+    synth.speak(ttsUtterance);
+    ttsSpeaking = true;
+    $("ttsLabel").textContent = ttsCurrentLabel;
+    ttsUIUpdate();
+  }
+
+  function ttsPauseResume() {
+    if (!synth) return;
+    if (synth.paused) { synth.resume(); ttsPaused = false; }
+    else if (synth.speaking) { synth.pause(); ttsPaused = true; }
+    ttsUIUpdate();
+  }
+  function ttsStop() {
+    if (!synth) return;
+    synth.cancel();
+    ttsSpeaking = false; ttsPaused = false;
+    ttsUIUpdate();
+  }
+  function ttsRewind() {
+    if (ttsCurrentText) ttsSpeak(ttsCurrentText, ttsCurrentLabel);
+  }
+
+  function ttsUIUpdate() {
+    var bar = $("ttsFloat");
+    if (ttsSpeaking) {
+      bar.classList.add("active");
+      $("ttsPlayIcon").style.display = ttsPaused ? "" : "none";
+      $("ttsPauseIcon").style.display = ttsPaused ? "none" : "";
+    } else {
+      bar.classList.remove("active");
+    }
+  }
+
+  $("ttsPlayPause").addEventListener("click", ttsPauseResume);
+  $("ttsStop").addEventListener("click", ttsStop);
+  $("ttsRewind").addEventListener("click", ttsRewind);
+
+  // Expose a global for the main app to call when injecting listen buttons
+  window.__ttsSpeak = ttsSpeak;
+  window.__ttsStop = ttsStop;
+
+  /* ======= BACKGROUND MUSIC (YouTube + Local Files) ======= */
+  var ytPlayer = null;
+  var ytReady = false;
+  var ytVideoId = "";
+  var localAudio = null;      // HTML5 Audio element for local files
+  var localFileUrl = "";      // object URL for the loaded file
+  var localFileName = "";
+  var musicSource = "";       // "youtube" | "local" | ""
+
+  function extractYouTubeId(url) {
+    if (!url) return "";
+    var m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : "";
+  }
+
+  function loadYouTubeAPI(cb) {
+    if (window.YT && window.YT.Player) { cb(); return; }
+    var tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(tag);
+    window.onYouTubeIframeAPIReady = cb;
+  }
+
+  function createYTPlayer(videoId) {
+    ytVideoId = videoId;
+    var container = $("musicYt");
+    container.innerHTML = '<div id="ytPlayerDiv"></div>';
+    ytPlayer = new YT.Player("ytPlayerDiv", {
+      width: 1, height: 1,
+      videoId: videoId,
+      playerVars: { autoplay: 1, controls: 0, loop: 1, playlist: videoId },
+      events: {
+        onReady: function (e) {
+          ytReady = true;
+          var vol = S.ytVolume != null ? S.ytVolume : 30;
+          e.target.setVolume(vol);
+          e.target.playVideo();
+          musicSource = "youtube";
+          $("musicWidget").classList.add("active");
+          $("mwLabel").textContent = "YouTube";
+          showSourceInfo("🎬", "YouTube: " + $("ytUrlInput").value.trim());
+          mwUIUpdate(true);
+        },
+        onStateChange: function (e) {
+          mwUIUpdate(e.data === YT.PlayerState.PLAYING);
+        }
+      }
+    });
+  }
+
+  /* -- Local audio -- */
+  function createLocalAudio(file) {
+    stopAllMusic(true); // stop YouTube if active, keep UI
+    if (localFileUrl) URL.revokeObjectURL(localFileUrl);
+    localFileUrl = URL.createObjectURL(file);
+    localFileName = file.name;
+    localAudio = new Audio(localFileUrl);
+    localAudio.loop = true;
+    var vol = S.ytVolume != null ? S.ytVolume : 30;
+    localAudio.volume = vol / 100;
+    localAudio.play().then(function () {
+      musicSource = "local";
+      $("musicWidget").classList.add("active");
+      $("mwLabel").textContent = localFileName;
+      showSourceInfo("♫", "Local: " + localFileName);
+      mwUIUpdate(true);
+      $("ytStopBtn").style.display = "";
+    }).catch(function (err) {
+      alert("Could not play that file: " + err.message);
+    });
+    localAudio.addEventListener("play", function () { mwUIUpdate(true); });
+    localAudio.addEventListener("pause", function () { mwUIUpdate(false); });
+  }
+
+  function stopLocalAudio() {
+    if (localAudio) { localAudio.pause(); localAudio.src = ""; localAudio = null; }
+    if (localFileUrl) { URL.revokeObjectURL(localFileUrl); localFileUrl = ""; }
+    localFileName = "";
+    $("localFileLabel").classList.remove("has-file");
+    $("localFileName").textContent = "Choose MP3 or MP4 file…";
+    $("localFileLoadBtn").style.display = "none";
+  }
+
+  function stopYouTube() {
+    if (ytPlayer && ytReady) { ytPlayer.stopVideo(); ytPlayer.destroy(); ytPlayer = null; ytReady = false; }
+    $("musicYt").innerHTML = "";
+  }
+
+  function stopAllMusic(keepUI) {
+    stopYouTube();
+    stopLocalAudio();
+    musicSource = "";
+    if (!keepUI) {
+      $("musicWidget").classList.remove("active");
+      S.ytUrl = ""; saveSettings(S);
+      $("ytUrlInput").value = "";
+      $("ytStopBtn").style.display = "none";
+      hideSourceInfo();
+    }
+  }
+
+  function showSourceInfo(icon, text) {
+    var el = $("musicSourceInfo");
+    if (el) { el.style.display = ""; $("musicSourceIcon").textContent = icon; $("musicSourceText").textContent = text; }
+  }
+  function hideSourceInfo() {
+    var el = $("musicSourceInfo");
+    if (el) el.style.display = "none";
+  }
+
+  function mwUIUpdate(playing) {
+    $("mwPlayIcon").style.display = playing ? "none" : "";
+    $("mwPauseIcon").style.display = playing ? "" : "none";
+  }
+
+  /* -- File input wiring -- */
+  $("localFileInput").addEventListener("change", function () {
+    var file = this.files && this.files[0];
+    if (!file) return;
+    $("localFileName").textContent = file.name;
+    $("localFileLabel").classList.add("has-file");
+    $("localFileLoadBtn").style.display = "";
+    // Auto-play on selection
+    createLocalAudio(file);
+  });
+
+  $("localFileLoadBtn").addEventListener("click", function () {
+    var file = $("localFileInput").files && $("localFileInput").files[0];
+    if (file) createLocalAudio(file);
+  });
+
+  /* -- YouTube load button -- */
+  $("ytLoadBtn").addEventListener("click", function () {
+    var url = $("ytUrlInput").value.trim();
+    var id = extractYouTubeId(url);
+    if (!id) return alert("Could not find a YouTube video ID in that URL. Try a standard YouTube link.");
+    stopAllMusic(true);
+    S.ytUrl = url; saveSettings(S);
+    $("ytStopBtn").style.display = "";
+    $("mwLabel").textContent = "Loading…";
+    loadYouTubeAPI(function () { createYTPlayer(id); });
+  });
+
+  /* -- Widget play/pause -- */
+  $("mwPlayPause").addEventListener("click", function () {
+    if (musicSource === "youtube" && ytPlayer && ytReady) {
+      var state = ytPlayer.getPlayerState();
+      if (state === YT.PlayerState.PLAYING) { ytPlayer.pauseVideo(); mwUIUpdate(false); }
+      else { ytPlayer.playVideo(); mwUIUpdate(true); }
+    } else if (musicSource === "local" && localAudio) {
+      if (localAudio.paused) { localAudio.play(); }
+      else { localAudio.pause(); }
+    }
+  });
+
+  /* -- Volume (shared between both sources) -- */
+  function setMusicVolume(v) {
+    if (ytPlayer && ytReady) ytPlayer.setVolume(v);
+    if (localAudio) localAudio.volume = v / 100;
+    S.ytVolume = v; saveSettings(S);
+  }
+  $("mwVol").addEventListener("input", function () { setMusicVolume(+this.value); });
+  $("ytVolume").addEventListener("input", function () {
+    var v = +this.value;
+    $("ytVolVal").textContent = v + "%";
+    $("mwVol").value = v;
+    setMusicVolume(v);
+  });
+  if (S.ytVolume != null) {
+    $("ytVolume").value = S.ytVolume; $("ytVolVal").textContent = S.ytVolume + "%";
+    $("mwVol").value = S.ytVolume;
+  }
+
+  /* -- Stop / clear -- */
+  $("mwClose").addEventListener("click", function () { stopAllMusic(false); });
+  $("ytStopBtn").addEventListener("click", function () { stopAllMusic(false); });
+
+  /* -- Restore YouTube music on load -- */
+  if (S.ytUrl) {
+    $("ytUrlInput").value = S.ytUrl;
+    $("ytStopBtn").style.display = "";
+    var rid = extractYouTubeId(S.ytUrl);
+    if (rid) {
+      $("mwLabel").textContent = "Resuming…";
+      loadYouTubeAPI(function () { createYTPlayer(rid); });
+    }
+  }
+
+  /* ======= INJECT LISTEN BUTTONS INTO MODULE VIEWS ======= */
+  /* We monkey-patch the hashchange listener: after each module render,
+     find .block-label elements and append Listen buttons */
+  function injectListenButtons() {
+    if (!synth) return;
+    var labels = document.querySelectorAll("#view .block-label");
+    labels.forEach(function (lbl) {
+      // skip if already has a listen button
+      if (lbl.querySelector(".listen-btn")) return;
+      var section = lbl.closest(".block") || lbl.closest("section");
+      if (!section) return;
+      // gather readable text from the section
+      var btn = document.createElement("button");
+      btn.className = "listen-btn";
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.08"/></svg>Listen';
+      btn.addEventListener("click", function () {
+        var text = "";
+        section.querySelectorAll("p, .ki-def, .opt-text, span:not(.listen-btn span), li, .q-text, h4, .ex-sub, .explain p, .teach p, .t-body p").forEach(function (el) {
+          text += el.textContent.trim() + ". ";
+        });
+        if (!text.trim()) text = section.textContent.trim().slice(0, 3000);
+        var name = lbl.textContent.replace(/Listen$/i, "").trim();
+        window.__ttsSpeak(text, name);
+      });
+      lbl.appendChild(btn);
+    });
+  }
+
+  // Run after every hash change (the main IIFE renders first, then us)
+  var _origOnHash = window.onhashchange;
+  window.addEventListener("hashchange", function () {
+    setTimeout(injectListenButtons, 80);
+  });
+  // Also on initial load
+  setTimeout(injectListenButtons, 200);
+
+  // Stop TTS on navigation
+  window.addEventListener("hashchange", function () {
+    if (ttsSpeaking) ttsStop();
+  });
+
+  /* ======= CHATBOT (content-grounded Q&A) ======= */
+  var chatBtn = $("chatBtn");
+  function openChat() { $("chatOverlay").classList.add("open"); $("chatInput").focus(); }
+  function closeChat() { $("chatOverlay").classList.remove("open"); }
+  if (chatBtn) chatBtn.addEventListener("click", openChat);
+  $("chatClose").addEventListener("click", closeChat);
+  $("chatOverlay").addEventListener("click", function (e) { if (e.target === $("chatOverlay")) closeChat(); });
+
+  function chatSearch(query) {
+    var mods = window.__courseModules || [];
+    var q = query.toLowerCase().split(/\s+/).filter(function (w) { return w.length > 2; });
+    var results = [];
+    mods.forEach(function (m) {
+      var text = (m.overview || []).join(" ") + " " +
+        (m.keyIdeas || []).map(function (k) { return k.term + " " + k.def; }).join(" ") + " " +
+        (m.examples || []).map(function (e) { return e.title + " " + e.body; }).join(" ") + " " +
+        (m.teach || "");
+      var lower = text.toLowerCase();
+      var score = 0;
+      q.forEach(function (w) {
+        var idx = -1;
+        while ((idx = lower.indexOf(w, idx + 1)) !== -1) score++;
+      });
+      if (score > 0) results.push({ m: m, score: score, text: text });
+    });
+    results.sort(function (a, b) { return b.score - a.score; });
+    return results.slice(0, 3);
+  }
+
+  function chatAnswer(query) {
+    var results = chatSearch(query);
+    if (results.length === 0) return "I couldn't find content matching that question in the course material. Try rephrasing, or check the Key Ideas sections in each module.";
+    var best = results[0];
+    var snippets = best.text.split(/\.\s+/).filter(function (s) {
+      var sl = s.toLowerCase();
+      return query.toLowerCase().split(/\s+/).some(function (w) { return w.length > 2 && sl.indexOf(w) !== -1; });
+    }).slice(0, 4);
+    var answer = snippets.length > 0 ? snippets.join(". ").trim() + "." : best.text.slice(0, 400) + "…";
+    answer += '\n\n📖 Found in Module ' + best.m.num + ': ' + best.m.title;
+    if (results.length > 1) answer += '\n(Also relevant: Module ' + results[1].m.num + ': ' + results[1].m.title + ')';
+    return answer;
+  }
+
+  function addChatMsg(text, isUser) {
+    var div = document.createElement("div");
+    div.className = "chat-msg " + (isUser ? "user" : "bot");
+    div.textContent = text;
+    $("chatMessages").appendChild(div);
+    $("chatMessages").scrollTop = $("chatMessages").scrollHeight;
+  }
+
+  function handleChat() {
+    var input = $("chatInput");
+    var q = input.value.trim();
+    if (!q) return;
+    input.value = "";
+    addChatMsg(q, true);
+    setTimeout(function () {
+      var answer = chatAnswer(q);
+      addChatMsg(answer, false);
+    }, 200);
+  }
+
+  $("chatSend").addEventListener("click", handleChat);
+  $("chatInput").addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleChat(); }
+  });
+
+  /* ======= CERTIFICATE ======= */
+  var certBtn = $("certBtn");
+  function openCert() { $("certOverlay").classList.add("open"); updateCertStatus(); }
+  function closeCert() { $("certOverlay").classList.remove("open"); }
+  if (certBtn) certBtn.addEventListener("click", openCert);
+  $("certClose").addEventListener("click", closeCert);
+  $("certOverlay").addEventListener("click", function (e) { if (e.target === $("certOverlay")) closeCert(); });
+
+  function updateCertStatus() {
+    var mods = window.__courseModules || [];
+    var meta = window.__courseMeta || {};
+    var scores = window.__quizScores || {};
+    var passingScore = (meta.certificate && meta.certificate.passingScore) || 70;
+    var completed = 0, totalPct = 0, scored = 0;
+    mods.forEach(function (m) {
+      if (scores[m.id]) { scored++; totalPct += scores[m.id].pct; }
+    });
+    var avgPct = scored > 0 ? Math.round(totalPct / scored) : 0;
+    // Count completed = scored modules (took the quiz)
+    completed = scored;
+    var allDone = completed === mods.length;
+    var passed = allDone && avgPct >= passingScore;
+
+    $("certStats").innerHTML =
+      '<div class="cert-stat"><div class="cs-val">' + completed + ' / ' + mods.length + '</div><div class="cs-lbl">Modules quizzed</div></div>' +
+      '<div class="cert-stat"><div class="cs-val">' + avgPct + '%</div><div class="cs-lbl">Average score</div></div>' +
+      '<div class="cert-stat"><div class="cs-val">' + passingScore + '%</div><div class="cs-lbl">Passing grade</div></div>';
+
+    if (passed) {
+      $("certTitle").textContent = "You earned your certificate!";
+      $("certSubtitle").textContent = "Congratulations — you completed all modules with an average score of " + avgPct + "%.";
+      $("certStatus").querySelector(".cert-icon").textContent = "🎓";
+      $("certFormArea").style.display = "";
+    } else if (allDone) {
+      $("certTitle").textContent = "Almost there";
+      $("certSubtitle").textContent = "You completed all modules but your average score is " + avgPct + "%. You need " + passingScore + "% or above. Retake the quizzes to improve.";
+      $("certStatus").querySelector(".cert-icon").textContent = "📊";
+      $("certFormArea").style.display = "none";
+    } else {
+      $("certTitle").textContent = "Course Certificate";
+      $("certSubtitle").textContent = "Complete all " + mods.length + " module quizzes with a " + passingScore + "%+ average to earn your certificate.";
+      $("certStatus").querySelector(".cert-icon").textContent = "🏆";
+      $("certFormArea").style.display = "none";
+    }
+  }
+
+  $("certGenBtn").addEventListener("click", function () {
+    var name = $("certNameInput").value.trim();
+    if (!name) return alert("Please enter your name for the certificate.");
+    generateCertificate(name);
+  });
+
+  function generateCertificate(name) {
+    var meta = window.__courseMeta || {};
+    var scores = window.__quizScores || {};
+    var mods = window.__courseModules || [];
+    var totalPct = 0, scored = 0;
+    mods.forEach(function (m) { if (scores[m.id]) { scored++; totalPct += scores[m.id].pct; } });
+    var avgPct = scored > 0 ? Math.round(totalPct / scored) : 0;
+
+    var canvas = $("certCanvas");
+    var ctx = canvas.getContext("2d");
+    var W = 1100, H = 850;
+    canvas.width = W; canvas.height = H;
+
+    // Background
+    ctx.fillStyle = "#f8f4ec";
+    ctx.fillRect(0, 0, W, H);
+
+    // Border
+    ctx.strokeStyle = "#c98520";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(30, 30, W - 60, H - 60);
+    ctx.strokeStyle = "#0e1b2e";
+    ctx.lineWidth = 1;
+    ctx.strokeRect(40, 40, W - 80, H - 80);
+
+    // Corner accents
+    var corners = [[50, 50], [W - 50, 50], [50, H - 50], [W - 50, H - 50]];
+    ctx.fillStyle = "#c98520";
+    corners.forEach(function (c) {
+      ctx.beginPath(); ctx.arc(c[0], c[1], 6, 0, Math.PI * 2); ctx.fill();
+    });
+
+    // Seal/logo circle
+    ctx.beginPath(); ctx.arc(W / 2, 140, 45, 0, Math.PI * 2);
+    ctx.fillStyle = "#0e1b2e"; ctx.fill();
+    ctx.beginPath(); ctx.arc(W / 2, 140, 38, 0, Math.PI * 2);
+    ctx.strokeStyle = "#c98520"; ctx.lineWidth = 2; ctx.stroke();
+    ctx.fillStyle = "#c98520"; ctx.font = "bold 28px Arial"; ctx.textAlign = "center";
+    ctx.fillText("✦", W / 2, 150);
+
+    // Header
+    ctx.fillStyle = "#c98520"; ctx.font = "600 13px Arial"; ctx.letterSpacing = "6px";
+    ctx.fillText("CERTIFICATE OF COMPLETION", W / 2, 210);
+
+    // Title
+    ctx.fillStyle = "#0e1b2e"; ctx.font = "bold 32px Georgia";
+    ctx.fillText(meta.title || "Course Completion", W / 2, 270);
+
+    // Presented to
+    ctx.fillStyle = "#666"; ctx.font = "15px Arial";
+    ctx.fillText("This certifies that", W / 2, 330);
+
+    // Name
+    ctx.fillStyle = "#0e1b2e"; ctx.font = "italic bold 38px Georgia";
+    ctx.fillText(name, W / 2, 390);
+
+    // Line under name
+    ctx.strokeStyle = "#c98520"; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(W / 2 - 200, 405); ctx.lineTo(W / 2 + 200, 405); ctx.stroke();
+
+    // Description
+    ctx.fillStyle = "#444"; ctx.font = "15px Arial";
+    ctx.fillText("has successfully completed all " + mods.length + " modules of this course", W / 2, 450);
+    ctx.fillText("with an average quiz score of " + avgPct + "%", W / 2, 475);
+
+    // Issuer
+    var issuer = (meta.certificate && meta.certificate.issuer) || "Course Builder";
+    ctx.fillStyle = "#666"; ctx.font = "13px Arial";
+    ctx.fillText("Issued by: " + issuer, W / 2, 530);
+
+    // Date
+    var d = new Date();
+    var dateStr = d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+    ctx.fillText("Date of completion: " + dateStr, W / 2, 560);
+
+    // Source
+    if (meta.source) {
+      ctx.fillStyle = "#999"; ctx.font = "italic 11px Arial";
+      ctx.fillText(meta.source, W / 2, 600);
+    }
+
+    // Bottom decoration
+    ctx.fillStyle = "#c98520"; ctx.font = "24px Arial";
+    ctx.fillText("❧", W / 2, H - 70);
+
+    $("certPreview").style.display = "";
+
+    // Download as image (PNG — no jsPDF dependency needed)
+    try {
+      var link = document.createElement("a");
+      link.download = "Certificate_" + name.replace(/\s+/g, "_") + ".png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } catch (e) { /* canvas tainted or blocked — preview still shows */ }
+  }
+
+  /* ======= TTS ENHANCEMENTS: Word Highlight + Progress ======= */
+  // Save/restore highlight and progress settings
+  if (S.ttsHighlight != null) $("ttsHighlight").checked = !!S.ttsHighlight;
+  if (S.ttsShowProgress != null) $("ttsProgress").checked = !!S.ttsShowProgress;
+  else $("ttsProgress").checked = true;
+
+  $("ttsHighlight").addEventListener("change", function () {
+    S.ttsHighlight = this.checked; saveSettings(S);
+  });
+  $("ttsProgress").addEventListener("change", function () {
+    S.ttsShowProgress = this.checked; saveSettings(S);
+  });
+
+  // Override the TTS speak function to add highlighting and progress
+  var _origTtsSpeak = window.__ttsSpeak;
+  window.__ttsSpeak = function (text, label, sectionEl) {
+    if (!synth) return alert("Your browser does not support text-to-speech.");
+    ttsStop();
+    ttsCurrentText = text;
+    ttsCurrentLabel = label || "Reading…";
+
+    // Prepare highlighting if enabled and section element provided
+    var doHighlight = !!($("ttsHighlight") && $("ttsHighlight").checked) && sectionEl;
+    var doProgress = !!($("ttsProgress") && $("ttsProgress").checked);
+    var origHTML = doHighlight && sectionEl ? sectionEl.innerHTML : null;
+    var words = text.split(/\s+/);
+    var wordIndex = 0;
+
+    ttsUtterance = new SpeechSynthesisUtterance(text);
+    var voiceIdx = +($("voiceSelect").value || 0);
+    if (ttsVoices[voiceIdx]) ttsUtterance.voice = ttsVoices[voiceIdx];
+    ttsUtterance.rate = S.ttsRate || 1.0;
+    ttsUtterance.pitch = S.ttsPitch || 1.0;
+
+    // Progress bar for the section
+    var progBar = sectionEl ? sectionEl.querySelector(".tts-progress-section") : null;
+    if (doProgress && sectionEl && !progBar) {
+      progBar = document.createElement("div");
+      progBar.className = "tts-progress-section";
+      progBar.innerHTML = '<div class="tps-fill"></div>';
+      var bl = sectionEl.querySelector(".block-label");
+      if (bl) bl.after(progBar);
+    }
+    if (progBar && doProgress) progBar.classList.add("active");
+
+    ttsUtterance.onboundary = function (ev) {
+      if (ev.name === "word") {
+        wordIndex++;
+        if (doProgress && progBar) {
+          var pct = Math.min(100, Math.round((ev.charIndex / text.length) * 100));
+          var fill = progBar.querySelector(".tps-fill");
+          if (fill) fill.style.width = pct + "%";
+        }
+      }
+    };
+
+    ttsUtterance.onstart = function () { ttsSpeaking = true; ttsPaused = false; ttsUIUpdate(); };
+    ttsUtterance.onend = function () {
+      ttsSpeaking = false; ttsPaused = false; ttsUIUpdate();
+      if (progBar) { progBar.classList.remove("active"); var f = progBar.querySelector(".tps-fill"); if (f) f.style.width = "0%"; }
+    };
+    ttsUtterance.onerror = function () { ttsSpeaking = false; ttsUIUpdate(); };
+    ttsUtterance.onpause = function () { ttsPaused = true; ttsUIUpdate(); };
+    ttsUtterance.onresume = function () { ttsPaused = false; ttsUIUpdate(); };
+
+    synth.speak(ttsUtterance);
+    ttsSpeaking = true;
+    $("ttsLabel").textContent = ttsCurrentLabel;
+    ttsUIUpdate();
+  };
+
+  // Update listen button injection to pass section element for highlighting
+  var _origInjectListen = injectListenButtons;
+  injectListenButtons = function () {
+    if (!synth) return;
+    var labels = document.querySelectorAll("#view .block-label");
+    labels.forEach(function (lbl) {
+      if (lbl.querySelector(".listen-btn")) return;
+      var section = lbl.closest(".block") || lbl.closest("section");
+      if (!section) return;
+      var btn = document.createElement("button");
+      btn.className = "listen-btn";
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.08"/></svg>Listen';
+      btn.addEventListener("click", function () {
+        var text = "";
+        section.querySelectorAll("p, .ki-def, li, .q-text, h4, .explain p, .teach p, .t-body p").forEach(function (el) {
+          text += el.textContent.trim() + ". ";
+        });
+        if (!text.trim()) text = section.textContent.trim().slice(0, 3000);
+        var name = lbl.textContent.replace(/Listen$/i, "").trim();
+        window.__ttsSpeak(text, name, section);
+      });
+      lbl.appendChild(btn);
+    });
+  };
+
+  // Extend Escape key to close new panels too
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") { closeChat(); closeCert(); }
+  });
+
+})();
+
+</script>
+</body></html>
